@@ -1,8 +1,8 @@
 {
-  "name": "XXX",
+  "name": "qt-fotomgmt",
   "homepage": "https://github.com/qaraluch/XXX",
   "version": "0.1.0",
-  "description": "YYY",
+  "description": "gulp tasks package for my foto managment",
   "license": "MIT",
   "author": {
     "name": "qaraluch",
@@ -13,9 +13,9 @@
     "type": "git",
     "url": "https://github.com/qaraluch/XXX.git"
   },
-  "files": ["dist/", "src/"],
-  "main": "./dist/index.js",
-  "module": "./src/index.js",
+  "files": [],
+  "main": "",
+  "module": "",
   "scripts": {
     "build": "babel src --out-dir=dist",
     "test": "ava --verbose",
@@ -38,24 +38,33 @@
         }
       ]
     ],
-    "plugins": ["transform-runtime"]
+    "plugins": [
+      "transform-runtime"
+    ]
   },
   "ava": {
-    "require": ["babel-register"],
+    "require": [
+      "babel-register"
+    ],
     "babel": "inherit"
   },
   "devDependencies": {
-    "babel-cli": "0.0.1",
-    "ava": "0.0.1",
-    "babel-register": "0.0.1",
-    "babel-preset-env": "0.0.1",
-    "babel-plugin-transform-runtime": "0.0.1",
-    "eslint": "0.0.1",
-    "eslint-plugin-import": "0.0.1",
-    "babel-eslint": "0.0.1",
-    "prettier": "0.0.1"
+    "ava": "0.24.0",
+    "babel-cli": "6.26.0",
+    "babel-eslint": "8.1.2",
+    "babel-plugin-transform-runtime": "6.23.0",
+    "babel-preset-env": "1.6.1",
+    "babel-register": "6.26.0",
+    "eslint": "4.14.0",
+    "eslint-plugin-import": "2.8.0",
+    "gulp-debug": "3.1.0",
+    "prettier": "1.9.2"
   },
   "dependencies": {
-    "babel-runtime": "0.0.1"
+    "babel-runtime": "6.26.0",
+    "del": "3.0.0",
+    "gulp": "3.9.1",
+    "gulp-filter": "5.0.1",
+    "gulp-rename": "1.2.2"
   }
 }
