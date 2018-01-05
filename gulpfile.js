@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 const gulp = require("gulp");
 
 const rename = require("gulp-rename");
@@ -12,6 +14,10 @@ const debug = require("gulp-debug");
 // [sindresorhus/gulp-debug: Debug Vinyl file streams to see what files are run through your Gulp pipeline](https://github.com/sindresorhus/gulp-debug)
 // npm i gulp-debug -D
 
+const log = require("fancy-log");
+// [js-cli/fancy-log: Log things, prefixed with a timestamp](https://github.com/js-cli/fancy-log)
+// npm i fancy-log -S
+
 const paths = {};
 
 paths.cu = ".fotos/cu/**/*";
@@ -22,7 +28,7 @@ const cleanDir_cuBackup = () => cleanDir(paths.cuBackup);
 
 const renameExt = (from, to) => {
   const renameAndLogIt = path => {
-    console.log(`   - Renamed file: ${path.basename}${to}`);
+    log(`   - Renamed file: ${path.basename}${to}`);
     return to;
   };
   return rename(path => {
