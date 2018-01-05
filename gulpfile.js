@@ -1,6 +1,8 @@
 /* eslint-disable no-console */
 
 const gulp = require("gulp");
+const path = require("path");
+const chalk = require("chalk");
 
 const rename = require("gulp-rename");
 // [hparra/gulp-rename: Rename files easily](https://github.com/hparra/gulp-rename)
@@ -35,7 +37,7 @@ const cleanDir_cuSort = () => cleanDir(paths.cuSort);
 
 const renameExt = (from, to) => {
   const renameAndLogIt = path => {
-    log(`    -  renamed file: ${path.basename}${to}`);
+    log(`    -  renamed file: ${chalk.yellow(path.basename + to)}`);
     return to;
   };
   return rename(path => {
@@ -48,7 +50,17 @@ const filterByExt = ext => filter(`**/*${ext}`, { dot: true });
 const regexForWrongNames = /\d{4}-\d{2}-\d{2}\s\d{2}\.\d{2}\.\d{2}(-\d)?(\s)?(-)?(\s)?(.+)?\.jpg/;
 
 const filterWrongFileNames = regex => {
-  return filter(file => regex.test(file.path), { dot: true });
+  const filterFiles = file => {
+    let test = regex.test(file.path);
+    test ||
+      log(
+        `    -  detected wrong file name: ${chalk.yellow(
+          path.relative(file.base, file.path)
+        )}`
+      );
+    return test;
+  };
+  return filter(filterFiles, { dot: true });
 };
 
 /**
@@ -63,8 +75,8 @@ const fotosToSort = () =>
     // .pipe(debug({ title: "    - " }))
     .pipe(renameExt(".jpeg", ".jpg"))
     .pipe(renameExt(".JPG", ".jpg"))
-    .pipe(filterWrongFileNames(regexForWrongNames))
     .pipe(filterByExt(".jpg"))
+    .pipe(filterWrongFileNames(regexForWrongNames))
     .pipe(gulp.dest(paths.cuSort));
 
 gulp.task("cleanCuBackup", cleanDir_cuBackup);
