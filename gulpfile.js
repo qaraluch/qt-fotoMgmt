@@ -24,6 +24,10 @@ const filter = require("gulp-filter");
 // [sindresorhus/gulp-filter: Filter files in a vinyl stream](https://github.com/sindresorhus/gulp-filter)
 // npm i gulp-filter -S
 
+var vinylPaths = require("vinyl-paths");
+//[sindresorhus/vinyl-paths: Get the file paths in a vinyl stream](https://github.com/sindresorhus/vinyl-paths)
+// npm i vinyl-paths -S
+
 const paths = {};
 
 paths.fotosInCu = ".fotos/cu/**/*";
@@ -63,6 +67,15 @@ const filterWrongFileNames = regex => {
   return filter(filterFiles, { dot: true });
 };
 
+// const deleteSrcFiles = file => {
+//   console.log(file);
+//   return Promise.resolve();
+// };
+
+const deleteSrcFiles = file => {
+  return del(file);
+};
+
 /**
  **************************************************** TASKS
  */
@@ -77,7 +90,9 @@ const fotosToSort = () =>
     .pipe(renameExt(".JPG", ".jpg"))
     .pipe(filterByExt(".jpg"))
     .pipe(filterWrongFileNames(regexForWrongNames))
+    .pipe(vinylPaths(deleteSrcFiles))
     .pipe(gulp.dest(paths.cuSort));
+// .on("end", logIngo);
 
 gulp.task("cleanCuTemp", cleanDir_cuTemp);
 gulp.task("cleanCuSort", cleanDir_cuSort);
