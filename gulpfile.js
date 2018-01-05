@@ -27,12 +27,12 @@ const filter = require("gulp-filter");
 const paths = {};
 
 paths.fotosInCu = ".fotos/cu/**/*";
-paths.fotosInCuBackup = ".fotos/cuBackup/**/*";
-paths.cuBackup = ".fotos/cuBackup/";
+paths.fotosInCuTemp = ".fotos/cuTemp/**/*";
+paths.cuTemp = ".fotos/cuTemp/";
 paths.cuSort = ".fotos/cuSort/";
 
 const cleanDir = path => del(path);
-const cleanDir_cuBackup = () => cleanDir(paths.cuBackup);
+const cleanDir_cuTemp = () => cleanDir(paths.cuTemp);
 const cleanDir_cuSort = () => cleanDir(paths.cuSort);
 
 const renameExt = (from, to) => {
@@ -67,11 +67,11 @@ const filterWrongFileNames = regex => {
  **************************************************** TASKS
  */
 const backupFotos = () =>
-  gulp.src(paths.fotosInCu).pipe(gulp.dest(paths.cuBackup));
+  gulp.src(paths.fotosInCu).pipe(gulp.dest(paths.cuTemp));
 
 const fotosToSort = () =>
   gulp
-    .src(paths.fotosInCuBackup)
+    .src(paths.fotosInCuTemp)
     // .pipe(debug({ title: "    - " }))
     .pipe(renameExt(".jpeg", ".jpg"))
     .pipe(renameExt(".JPG", ".jpg"))
@@ -79,14 +79,14 @@ const fotosToSort = () =>
     .pipe(filterWrongFileNames(regexForWrongNames))
     .pipe(gulp.dest(paths.cuSort));
 
-gulp.task("cleanCuBackup", cleanDir_cuBackup);
+gulp.task("cleanCuTemp", cleanDir_cuTemp);
 gulp.task("cleanCuSort", cleanDir_cuSort);
 gulp.task("backupFotos", backupFotos);
 gulp.task("fotosToSort", fotosToSort);
 gulp.task(
   "default",
   gulp.series(
-    gulp.parallel("cleanCuBackup", "cleanCuSort"),
+    gulp.parallel("cleanCuTemp", "cleanCuSort"),
     "backupFotos",
     "fotosToSort"
   )
