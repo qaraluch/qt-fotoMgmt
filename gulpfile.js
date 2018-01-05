@@ -20,12 +20,15 @@ paths.cuBackup = ".fotos/cuBackup/";
 const cleanDir = path => del(path);
 const cleanDir_cuBackup = () => cleanDir(paths.cuBackup);
 
-const renameExt = (from, to) =>
-  rename(path => {
-    // path.dirname += "/ciao";
-    // path.basename += "-goodbye";
-    path.extname = path.extname === from ? to : path.extname;
+const renameExt = (from, to) => {
+  const renameAndLogIt = path => {
+    console.log(`   - Renamed file: ${path.basename}${to}`);
+    return to;
+  };
+  return rename(path => {
+    path.extname = path.extname === from ? renameAndLogIt(path) : path.extname;
   });
+};
 
 const pipes = {};
 
