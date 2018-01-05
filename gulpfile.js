@@ -18,17 +18,24 @@ const log = require("fancy-log");
 // [js-cli/fancy-log: Log things, prefixed with a timestamp](https://github.com/js-cli/fancy-log)
 // npm i fancy-log -S
 
+const filter = require("gulp-filter");
+// [sindresorhus/gulp-filter: Filter files in a vinyl stream](https://github.com/sindresorhus/gulp-filter)
+// npm i gulp-filter -S
+
 const paths = {};
 
-paths.cu = ".fotos/cu/**/*";
+paths.fotosInCu = ".fotos/cu/**/*";
+paths.fotosInCuBackup = ".fotos/cuBackup/**/*";
 paths.cuBackup = ".fotos/cuBackup/";
+paths.cuSort = ".fotos/cuSort/";
 
 const cleanDir = path => del(path);
 const cleanDir_cuBackup = () => cleanDir(paths.cuBackup);
+const cleanDir_cuSort = () => cleanDir(paths.cuSort);
 
 const renameExt = (from, to) => {
   const renameAndLogIt = path => {
-    log(`   - Renamed file: ${path.basename}${to}`);
+    log(`    -  renamed file: ${path.basename}${to}`);
     return to;
   };
   return rename(path => {
@@ -36,18 +43,39 @@ const renameExt = (from, to) => {
   });
 };
 
-const pipes = {};
+const filterByExt = ext => filter(`**/*${ext}`, { dot: true });
 
-pipes.rename = function() {
-  return (
-    gulp
-      .src(paths.cu)
-      .pipe(renameExt(".jpeg", ".jpg"))
-      // .pipe(debug({ title: "List of files: " }))
-      .pipe(gulp.dest(paths.cuBackup))
-  );
+const regexForWrongNames = /\d{4}-\d{2}-\d{2}\s\d{2}\.\d{2}\.\d{2}(-\d)?(\s)?(-)?(\s)?(.+)?\.jpg/;
+
+const filterWrongFileNames = regex => {
+  return filter(file => regex.test(file.path), { dot: true });
 };
 
-gulp.task("rename", pipes.rename);
-gulp.task("cleanDev", cleanDir_cuBackup);
-gulp.task("default", gulp.series("rename"));
+/**
+ **************************************************** TASKS
+ */
+const backupFotos = () =>
+  gulp.src(paths.fotosInCu).pipe(gulp.dest(paths.cuBackup));
+
+const fotosToSort = () =>
+  gulp
+    .src(paths.fotosInCuBackup)
+    // .pipe(debug({ title: "    - " }))
+    .pipe(renameExt(".jpeg", ".jpg"))
+    .pipe(renameExt(".JPG", ".jpg"))
+    .pipe(filterWrongFileNames(regexForWrongNames))
+    .pipe(filterByExt(".jpg"))
+    .pipe(gulp.dest(paths.cuSort));
+
+gulp.task("cleanCuBackup", cleanDir_cuBackup);
+gulp.task("cleanCuSort", cleanDir_cuSort);
+gulp.task("backupFotos", backupFotos);
+gulp.task("fotosToSort", fotosToSort);
+gulp.task(
+  "default",
+  gulp.series(
+    gulp.parallel("cleanCuBackup", "cleanCuSort"),
+    "backupFotos",
+    "fotosToSort"
+  )
+);
