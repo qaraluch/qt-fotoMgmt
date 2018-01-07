@@ -29,7 +29,7 @@ const vinylPaths = require("vinyl-paths");
 // npm i vinyl-paths -S
 
 const data = require("gulp-data");
-//[colynb/gulp-data: Generate a data object from a variety of sources: json, front-matter, database, anything... and set it to the file object for other plugins to consume.](https://github.com/colynb/gulp-data)
+//[colynb/gulp-data: ](https://github.com/colynb/gulp-data)
 // npm i gulp-data -S
 
 const tap = require("gulp-tap");
@@ -46,6 +46,20 @@ paths.cuSort = ".fotos/cuSort/";
 const cleanDir = path => del(path);
 const cleanDir_cuTemp = () => cleanDir(paths.cuTemp);
 const cleanDir_cuSort = () => cleanDir(paths.cuSort);
+
+const markExtFor = (ext, what) => {
+  let myData = {};
+  return data(function(file) {
+    const fileExt = path.extname(file.path);
+    const fileName = path.relative(path.dirname(file.path), file.path);
+    function logExtensionToMark() {
+      log(`    -  marked file for ${what} : ${fileName}`);
+      return true;
+    }
+    myData.markedExt = fileExt === ext ? logExtensionToMark() : false;
+    return myData;
+  });
+};
 
 const renameExt = (from, to) => {
   const renameAndLogIt = path => {
@@ -105,9 +119,13 @@ const fotosToSort = () =>
   gulp
     .src(paths.fotosInCuTemp)
     // .pipe(debug({ title: "    - " }))
+    .pipe(markExtFor(".jpeg", "rename"))
     .pipe(renameExt(".jpeg", ".jpg"))
-    .pipe(addData("terefere"))
+    // .pipe(renameExtTo(".jpg"))
+    // .pipe(addData("terefere"))
+    .pipe(markExtFor(".JPG", "rename"))
     .pipe(renameExt(".JPG", ".jpg"))
+    .pipe(markExtFor(".jpg", "filter"))
     .pipe(filterByExt(".jpg"))
     .pipe(tap(logData))
     .pipe(filterWrongFileNames(regexForWrongNames))
