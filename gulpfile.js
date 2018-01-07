@@ -28,6 +28,14 @@ var vinylPaths = require("vinyl-paths");
 //[sindresorhus/vinyl-paths: Get the file paths in a vinyl stream](https://github.com/sindresorhus/vinyl-paths)
 // npm i vinyl-paths -S
 
+var data = require("gulp-data");
+//[colynb/gulp-data: Generate a data object from a variety of sources: json, front-matter, database, anything... and set it to the file object for other plugins to consume.](https://github.com/colynb/gulp-data)
+// npm i gulp-data -S
+
+const tap = require("gulp-tap");
+//[geejs/gulp-tap: Easily tap into a gulp pipeline without creating a plugin.](https://github.com/geejs/gulp-tap)
+// npm i gulp-tap -S
+
 const paths = {};
 
 paths.fotosInCu = ".fotos/cu/**/*";
@@ -76,6 +84,17 @@ const deleteSrcFiles = file => {
   return del(file);
 };
 
+const addData = info => {
+  return data(function(file) {
+    return { test: info };
+  });
+};
+
+const logData = file => {
+  log(file.data);
+  // return Promise.resolve();
+};
+
 /**
  **************************************************** TASKS
  */
@@ -87,8 +106,10 @@ const fotosToSort = () =>
     .src(paths.fotosInCuTemp)
     // .pipe(debug({ title: "    - " }))
     .pipe(renameExt(".jpeg", ".jpg"))
+    .pipe(addData("terefere"))
     .pipe(renameExt(".JPG", ".jpg"))
     .pipe(filterByExt(".jpg"))
+    .pipe(tap(logData))
     .pipe(filterWrongFileNames(regexForWrongNames))
     .pipe(vinylPaths(deleteSrcFiles))
     .pipe(gulp.dest(paths.cuSort));
