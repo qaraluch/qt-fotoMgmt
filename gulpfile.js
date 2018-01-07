@@ -24,11 +24,11 @@ const filter = require("gulp-filter");
 // [sindresorhus/gulp-filter: Filter files in a vinyl stream](https://github.com/sindresorhus/gulp-filter)
 // npm i gulp-filter -S
 
-var vinylPaths = require("vinyl-paths");
+const vinylPaths = require("vinyl-paths");
 //[sindresorhus/vinyl-paths: Get the file paths in a vinyl stream](https://github.com/sindresorhus/vinyl-paths)
 // npm i vinyl-paths -S
 
-var data = require("gulp-data");
+const data = require("gulp-data");
 //[colynb/gulp-data: Generate a data object from a variety of sources: json, front-matter, database, anything... and set it to the file object for other plugins to consume.](https://github.com/colynb/gulp-data)
 // npm i gulp-data -S
 
