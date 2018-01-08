@@ -19,13 +19,14 @@ const zip = require("gulp-zip");
 // FNS:
 const paths = require("./fns/load-paths.js")("./paths.json");
 const cleanUpDir = require("./fns/cleanup-dir");
+const timeStamp = require("./fns/time-stamp");
 
 //TASKS:
 const backupCuFotos = () =>
   gulp
     .src(paths.files_cu)
     .pipe(debug({ title: "          - " }))
-    .pipe(zip("cu-temp-arch.zip"))
+    .pipe(zip(`cu-temp-arch-${timeStamp()}.zip`))
     .pipe(debug({ title: "          - " }))
     .pipe(gulp.dest(paths.dir_cuBackup));
 
