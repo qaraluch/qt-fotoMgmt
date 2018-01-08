@@ -12,6 +12,10 @@ const log = require("fancy-log");
 // [js-cli/fancy-log: Log things, prefixed with a timestamp](https://github.com/js-cli/fancy-log)
 // npm i fancy-log -S
 
+const zip = require("gulp-zip");
+// [sindresorhus/gulp-zip: ZIP compress files](https://github.com/sindresorhus/gulp-zip)
+// npm i gulp-zip -S
+
 // FNS:
 const paths = require("./fns/load-paths.js")("./paths.json");
 const cleanUpDir = require("./fns/cleanup-dir");
@@ -20,6 +24,8 @@ const cleanUpDir = require("./fns/cleanup-dir");
 const backupCuFotos = () =>
   gulp
     .src(paths.files_cu)
+    .pipe(debug({ title: "          - " }))
+    .pipe(zip("cu-temp-arch.zip"))
     .pipe(debug({ title: "          - " }))
     .pipe(gulp.dest(paths.dir_cuBackup));
 
