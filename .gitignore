@@ -3,3 +3,4 @@ dist
 .vscode
 .fotos
 paths.json
+gulpfile.js
