@@ -13,6 +13,7 @@ const banner = require("./fns/banner");
 const filterByExt = require("./fns/filter-by-ext");
 const deleteSrcFiles = require("./fns/delete-src-files");
 const logFile = require("./fns/log-file");
+const logMsg = require("./fns/log-msg");
 
 //TASKS:
 const copyJPGs = () => {
@@ -52,7 +53,15 @@ const copyMP4s = () => {
 };
 
 const seeWahtLeftInCu = () => {
-  return gulp.src(paths.files_cu).pipe(logFile());
+  return gulp
+    .src(paths.files_cu)
+    .pipe(
+      logMsg(
+        "If some files left in CU dir means that some edgecases is not supported!",
+        { task: "warn", color: "reset" }
+      )
+    )
+    .pipe(logFile());
 };
 
 gulp.task("copyJPGs", copyJPGs);
