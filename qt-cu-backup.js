@@ -33,7 +33,7 @@ const backupCuFotos = () => {
     .pipe(debug({ title: "  - " }))
     .pipe(gulp.dest(paths.dir_cuBackup));
 };
-gulp.task("cleanUpCuDir", () => cleanUpDir(paths.files_cu));
+gulp.task("cleanupCuBack", () => cleanUpDir(paths.dir_cuBackup));
 
 gulp.task("backupCuFotos", backupCuFotos);
 
