@@ -14,6 +14,7 @@ const filterByExt = require("./fns/filter-by-ext");
 const deleteSrcFiles = require("./fns/delete-src-files");
 const logFile = require("./fns/log-file");
 const logMsg = require("./fns/log-msg");
+const renameExt = require("./fns/rename-ext");
 
 //TASKS:
 const copyJPGs = () => {
@@ -70,7 +71,7 @@ gulp.task("copyBIGJPGs", copyBIGJPGs);
 gulp.task("copyMP4s", copyMP4s);
 gulp.task("seeWahtLeftInCu", seeWahtLeftInCu);
 gulp.task(
-  "default",
+  "firstSort",
   gulp.series(
     "copyJPGs",
     "copyJEPGs",
@@ -80,7 +81,42 @@ gulp.task(
   )
 );
 
-// gulp.task("cleanUpCuDir", () => cleanUpDir(paths.files_cu));
-// gulp.task("backupCuFotos", backupCuFotos);
+const renameBIGJPGs = () => {
+  return gulp
+    .src(paths.files_cuTemp_bigjpgs)
+    .pipe(renameExt(".JPG", ".jpg"))
+    .pipe(gulp.dest(paths.dir_cuTemp_jpgFlush));
+};
+
+const renameJPEGs = () => {
+  return gulp
+    .src(paths.files_cuTemp_jpegs)
+    .pipe(renameExt(".jpeg", ".jpg"))
+    .pipe(gulp.dest(paths.dir_cuTemp_jpgFlush));
+};
+
+const moveJPGs = () => {
+  return gulp
+    .src(paths.files_cuTemp_jpgs)
+    .pipe(gulp.dest(paths.dir_cuTemp_jpgFlush));
+};
+
+gulp.task("renameBIGJPGs", renameBIGJPGs);
+gulp.task("cleanupBIGJPGs", () => cleanUpDir(paths.dir_cuTemp_bigjpgs));
+gulp.task("renameJPEGs", renameJPEGs);
+gulp.task("cleanupJPEGs", () => cleanUpDir(paths.dir_cuTemp_jpegs));
+gulp.task("moveJPGs", moveJPGs);
+gulp.task("cleanupJPGs", () => cleanUpDir(paths.dir_cuTemp_jpgs));
+gulp.task(
+  "renameExtensions",
+  gulp.series(
+    gulp.parallel("renameBIGJPGs", "renameJPEGs", "moveJPGs"),
+    gulp.parallel("cleanupBIGJPGs", "cleanupJPEGs", "cleanupJPGs")
+  )
+);
+
+gulp.task("default", gulp.series("renameExtensions")); //for dev
+// gulp.task("default", gulp.series("firstSort", "renameExtensions")); //for dev all
+
 // console.log("\n");
 // banner("cu-backup", "ANSI Shadow");
