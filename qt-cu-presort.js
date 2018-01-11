@@ -18,44 +18,40 @@ const renameExt = require("./fns/rename-ext");
 const filterWrongFileNames = require("./fns/filter-wrong-filenames");
 
 //TASKS:
-const copyJPGs = () => {
-  return gulp
+const copyJPGs = () =>
+  gulp
     .src(paths.files_cu)
     .pipe(filterByExt(".jpg"))
     .pipe(logFile())
     .pipe(deleteSrcFiles())
     .pipe(gulp.dest(paths.dir_cuTemp_jpgs));
-};
 
-const copyJEPGs = () => {
-  return gulp
+const copyJEPGs = () =>
+  gulp
     .src(paths.files_cu)
     .pipe(filterByExt(".jpeg"))
     .pipe(logFile())
     .pipe(deleteSrcFiles())
     .pipe(gulp.dest(paths.dir_cuTemp_jpegs));
-};
 
-const copyBIGJPGs = () => {
-  return gulp
+const copyBIGJPGs = () =>
+  gulp
     .src(paths.files_cu)
     .pipe(filterByExt(".JPG"))
     .pipe(logFile())
     .pipe(deleteSrcFiles())
     .pipe(gulp.dest(paths.dir_cuTemp_bigjpgs));
-};
 
-const copyMP4s = () => {
-  return gulp
+const copyMP4s = () =>
+  gulp
     .src(paths.files_cu)
     .pipe(filterByExt(".mp4"))
     .pipe(logFile())
     .pipe(deleteSrcFiles())
     .pipe(gulp.dest(paths.dir_cuTemp_mp4s));
-};
 
-const seeWahtLeftInCu = () => {
-  return gulp
+const seeWahtLeftInCu = () =>
+  gulp
     .src(paths.files_cu)
     .pipe(
       logMsg(
@@ -64,7 +60,6 @@ const seeWahtLeftInCu = () => {
       )
     )
     .pipe(logFile());
-};
 
 gulp.task("copyJPGs", copyJPGs);
 gulp.task("copyJEPGs", copyJEPGs);
@@ -82,25 +77,20 @@ gulp.task(
   )
 );
 
-const renameBIGJPGs = () => {
-  return gulp
+const renameBIGJPGs = () =>
+  gulp
     .src(paths.files_cuTemp_bigjpgs)
     .pipe(renameExt(".JPG", ".jpg"))
     .pipe(gulp.dest(paths.dir_cuTemp_jpgFlush));
-};
 
-const renameJPEGs = () => {
-  return gulp
+const renameJPEGs = () =>
+  gulp
     .src(paths.files_cuTemp_jpegs)
     .pipe(renameExt(".jpeg", ".jpg"))
     .pipe(gulp.dest(paths.dir_cuTemp_jpgFlush));
-};
 
-const moveJPGs = () => {
-  return gulp
-    .src(paths.files_cuTemp_jpgs)
-    .pipe(gulp.dest(paths.dir_cuTemp_jpgFlush));
-};
+const moveJPGs = () =>
+  gulp.src(paths.files_cuTemp_jpgs).pipe(gulp.dest(paths.dir_cuTemp_jpgFlush));
 
 gulp.task("renameBIGJPGs", renameBIGJPGs);
 gulp.task("cleanupBIGJPGs", () => cleanUpDir(paths.dir_cuTemp_bigjpgs));
