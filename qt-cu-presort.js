@@ -50,31 +50,23 @@ const copyMP4s = () =>
     .pipe(deleteSrcFiles())
     .pipe(gulp.dest(paths.dir_cuTemp_mp4s));
 
-const seeWahtLeftInCu = () =>
+const msg_leftInCu =
+  "If some files left in CU dir means that some edgecases is not supported!";
+
+const seeWhatLeft = msg =>
   gulp
     .src(paths.files_cu)
-    .pipe(
-      logMsg(
-        "If some files left in CU dir means that some edgecases is not supported!",
-        { task: "warn", color: "reset" }
-      )
-    )
+    .pipe(logMsg(msg, { task: "warn", color: "reset" }))
     .pipe(logFile());
 
 gulp.task("copyJPGs", copyJPGs);
 gulp.task("copyJEPGs", copyJEPGs);
 gulp.task("copyBIGJPGs", copyBIGJPGs);
 gulp.task("copyMP4s", copyMP4s);
-gulp.task("seeWahtLeftInCu", seeWahtLeftInCu);
+gulp.task("seeWhatLeft", seeWhatLeft(msg_leftInCu));
 gulp.task(
   "firstSort",
-  gulp.series(
-    "copyJPGs",
-    "copyJEPGs",
-    "copyBIGJPGs",
-    "copyMP4s",
-    "seeWahtLeftInCu"
-  )
+  gulp.series("copyJPGs", "copyJEPGs", "copyBIGJPGs", "copyMP4s", "seeWhatLeft")
 );
 
 const renameBIGJPGs = () =>
@@ -106,12 +98,12 @@ gulp.task(
   )
 );
 
-const regexForWrongNames = /\d{4}-\d{2}-\d{2}\s\d{2}\.\d{2}\.\d{2}(-\d)?(\s)?(-)?(\s)?(.+)?\.jpg/;
+const regexForCheckNames = /\d{4}-\d{2}-\d{2}\s\d{2}\.\d{2}\.\d{2}(-\d)?(\s)?(-)?(\s)?(.+)?\.jpg/;
 
 const checkNames = () =>
   gulp
     .src(paths.files_cuTemp_jpgFlush)
-    .pipe(filterWrongFileNames(regexForWrongNames))
+    .pipe(filterWrongFileNames(regexForCheckNames))
     .pipe(deleteSrcFiles())
     .pipe(gulp.dest(paths.dir_cuTemp_goodJPGs));
 
