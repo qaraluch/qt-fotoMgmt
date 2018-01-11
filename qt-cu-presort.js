@@ -53,17 +53,17 @@ const copyMP4s = () =>
 const msg_leftInCu =
   "If some files left in CU dir means that some edgecases is not supported!";
 
-const seeWhatLeft = msg =>
+const seeWhatLeft = () =>
   gulp
     .src(paths.files_cu)
-    .pipe(logMsg(msg, { task: "warn", color: "reset" }))
+    .pipe(logMsg(msg_leftInCu, { task: "warn", color: "reset" }))
     .pipe(logFile());
 
 gulp.task("copyJPGs", copyJPGs);
 gulp.task("copyJEPGs", copyJEPGs);
 gulp.task("copyBIGJPGs", copyBIGJPGs);
 gulp.task("copyMP4s", copyMP4s);
-gulp.task("seeWhatLeft", seeWhatLeft(msg_leftInCu));
+gulp.task("seeWhatLeft", seeWhatLeft);
 gulp.task(
   "firstSort",
   gulp.series("copyJPGs", "copyJEPGs", "copyBIGJPGs", "copyMP4s", "seeWhatLeft")
@@ -109,8 +109,11 @@ const checkNames = () =>
 
 gulp.task("checkNames", checkNames);
 
-gulp.task("default", gulp.series("checkNames")); //for dev
-// gulp.task("default", gulp.series("firstSort", "renameExtensions")); //for dev all
+// gulp.task("default", gulp.series("checkNames")); //for dev
+gulp.task(
+  "default",
+  gulp.series("firstSort", "renameExtensions", "checkNames")
+); //for dev all
 
 // console.log("\n");
 // banner("cu-backup", "ANSI Shadow");
