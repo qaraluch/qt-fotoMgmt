@@ -15,6 +15,7 @@ const deleteSrcFiles = require("./fns/delete-src-files");
 const logFile = require("./fns/log-file");
 const logMsg = require("./fns/log-msg");
 const renameExt = require("./fns/rename-ext");
+const filterWrongFileNames = require("./fns/filter-wrong-filenames");
 
 //TASKS:
 const copyJPGs = () => {
@@ -115,8 +116,21 @@ gulp.task(
   )
 );
 
-gulp.task("default", gulp.series("renameExtensions")); //for dev
+const regexForWrongNames = /\d{4}-\d{2}-\d{2}\s\d{2}\.\d{2}\.\d{2}(-\d)?(\s)?(-)?(\s)?(.+)?\.jpg/;
+
+const checkNames = () =>
+  gulp
+    .src(paths.files_cuTemp_jpgFlush)
+    .pipe(filterWrongFileNames(regexForWrongNames))
+    .pipe(deleteSrcFiles())
+    .pipe(gulp.dest(paths.dir_cuTemp_goodJPGs));
+
+gulp.task("checkNames", checkNames);
+
+gulp.task("default", gulp.series("checkNames")); //for dev
 // gulp.task("default", gulp.series("firstSort", "renameExtensions")); //for dev all
 
 // console.log("\n");
 // banner("cu-backup", "ANSI Shadow");
+
+//TODO: remove {}
