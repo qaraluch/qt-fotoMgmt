@@ -175,13 +175,29 @@ gulp.task(
   gulp.series("normalizeJPGNames", "cleanupGoodJPGs")
 );
 
-// gulp.task("default", gulp.series("flushAllToGood", "cleanupJpgRenamed")); //for dev
+const movePhotosToCuSort = () => {
+  return gulp
+    .src(paths.files_cuTemp_nomralizedNames)
+    .pipe(logFile())
+    .pipe(gulp.dest(paths.dir_cuSort));
+};
+
+gulp.task("movePhotosToCuSort", movePhotosToCuSort);
+gulp.task("cleanupNormalizedNames", () =>
+  cleanUpDir(paths.dir_cuTemp_normalizedNames)
+);
+gulp.task(
+  "moveToCuSort",
+  gulp.series("movePhotosToCuSort", "cleanupNormalizedNames")
+);
+
 gulp.task(
   "default",
   gulp.series(
     "firstSort",
     "renameExtensions",
     "renameWrongNames",
-    "normalizeNames"
+    "normalizeNames",
+    "moveToCuSort"
   )
 );
