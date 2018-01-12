@@ -16,6 +16,7 @@ const logFile = require("./fns/log-file");
 const logMsg = require("./fns/log-msg");
 const renameExt = require("./fns/rename-ext");
 const filterWrongFileNames = require("./fns/filter-wrong-filenames");
+const renameAfterExifDate = require("./fns/rename-after-exif-date")(); //lazypipe
 
 //TASKS:
 const copyJPGs = () =>
@@ -107,12 +108,29 @@ const checkNames = () =>
     .pipe(deleteSrcFiles())
     .pipe(gulp.dest(paths.dir_cuTemp_goodJPGs));
 
-gulp.task("checkNames", checkNames);
+const msg_tryToRename = "Try to rename files in jpgFlush dir after exif date!";
 
-// gulp.task("default", gulp.series("checkNames")); //for dev
+const tryToRenameWrongAfterExifDate = () =>
+  gulp
+    .src(paths.files_cuTemp_jpgFlush)
+    .pipe(logFile())
+    .pipe(logMsg(msg_tryToRename, { task: "warn" }))
+    .pipe(deleteSrcFiles())
+    .pipe(renameAfterExifDate())
+    .pipe(gulp.dest(paths.dir_cuTemp_jpgRenamed));
+
+gulp.task("checkNames", checkNames);
+gulp.task("tryToRenameWrongAfterExifDate", tryToRenameWrongAfterExifDate);
+
+// gulp.task("default", gulp.series("tryToRenameWrongAfterExifDate")); //for dev
 gulp.task(
   "default",
-  gulp.series("firstSort", "renameExtensions", "checkNames")
+  gulp.series(
+    "firstSort",
+    "renameExtensions",
+    "checkNames",
+    "tryToRenameWrongAfterExifDate"
+  )
 ); //for dev all
 
 // console.log("\n");
