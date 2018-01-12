@@ -52,7 +52,7 @@ const copyMP4s = () =>
     .pipe(gulp.dest(paths.dir_cuTemp_mp4s));
 
 const msg_leftInCu =
-  "If some files left in CU dir means that some edgecases is not supported!";
+  "If some files left in CU dir: means that some edgecases is not supported!";
 
 const seeWhatLeft = () =>
   gulp
@@ -128,20 +128,37 @@ const seeWhatLeftInJpgFlush = () =>
     .pipe(logMsg(msg_leftInJpgFlush, { task: "warn", color: "yellow" }))
     .pipe(logFile());
 
+const msg_moveAllToGood = "Movin all renamed files to goodJPGs dir.";
+
+const flushAllToGood = () => {
+  return gulp
+    .src(paths.files_cuTemp_jpgRenames)
+    .pipe(logMsg(msg_moveAllToGood, { color: "reset" }))
+    .pipe(logFile())
+    .pipe(gulp.dest(paths.dir_cuTemp_goodJPGs));
+};
+
 gulp.task("checkNames", checkNames);
 gulp.task("tryToRenameWrongAfterExifDate", tryToRenameWrongAfterExifDate);
 gulp.task("seeWhatLeftInJpgFlush", seeWhatLeftInJpgFlush);
-
-// gulp.task("default", gulp.series("tryToRenameWrongAfterExifDate")); //for dev
+gulp.task("flushAllToGood", flushAllToGood);
+gulp.task("cleanupJpgRenamed", () => cleanUpDir(paths.dir_cuTemp_jpgRenamed));
 gulp.task(
-  "default",
+  "renameWrongNames",
   gulp.series(
-    "firstSort",
-    "renameExtensions",
     "checkNames",
     "tryToRenameWrongAfterExifDate",
-    "seeWhatLeftInJpgFlush"
+    "seeWhatLeftInJpgFlush",
+    "flushAllToGood",
+    "cleanupJpgRenamed"
+    // jpgFlush will remain due to some files may be not renamed
   )
+); //for dev all
+
+// gulp.task("default", gulp.series("flushAllToGood", "cleanupJpgRenamed")); //for dev
+gulp.task(
+  "default",
+  gulp.series("firstSort", "renameExtensions", "renameWrongNames")
 ); //for dev all
 
 // console.log("\n");
