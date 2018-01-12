@@ -20,13 +20,16 @@ const renameAfterExifDate = require("./fns/rename-after-exif-date")(); //lazypip
 const normalizePhotoNames = require("./fns/normalize-photo-names");
 
 //TASKS:
-const copyJPGs = () =>
-  gulp
+const copyJPGs = () => {
+  console.log("\n");
+  banner("cu-presort", "ANSI Shadow");
+  return gulp
     .src(paths.files_cu)
     .pipe(filterByExt(".jpg"))
     .pipe(logFile())
     .pipe(deleteSrcFiles())
     .pipe(gulp.dest(paths.dir_cuTemp_jpgs));
+};
 
 const copyJEPGs = () =>
   gulp
@@ -182,6 +185,3 @@ gulp.task(
     "normalizeNames"
   )
 );
-
-// console.log("\n");
-// banner("cu-presort", "ANSI Shadow");
