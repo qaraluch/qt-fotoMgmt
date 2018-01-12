@@ -17,6 +17,7 @@ const logMsg = require("./fns/log-msg");
 const renameExt = require("./fns/rename-ext");
 const filterWrongFileNames = require("./fns/filter-wrong-filenames");
 const renameAfterExifDate = require("./fns/rename-after-exif-date")(); //lazypipe
+const normalizePhotoNames = require("./fns/normalize-photo-names");
 
 //TASKS:
 const copyJPGs = () =>
@@ -151,18 +152,36 @@ gulp.task(
     "seeWhatLeftInJpgFlush",
     "flushAllToGood",
     "cleanupJpgRenamed"
-    // jpgFlush will remain due to some files may be not renamed
+    // jpgFlush will remain due to some files may not be renamed
   )
-); //for dev all
+);
+
+const normalizeJPGNames = () => {
+  return gulp
+    .src(paths.files_cuTemp_goodJPGs)
+    .pipe(logFile())
+    .pipe(normalizePhotoNames())
+    .pipe(gulp.dest(paths.dir_cuTemp_normalizedNames));
+};
+
+gulp.task("normalizeJPGNames", normalizeJPGNames);
+gulp.task("cleanupGoodJPGs", () => cleanUpDir(paths.dir_cuTemp_goodJPGs));
+
+gulp.task(
+  "normalizeNames",
+  gulp.series("normalizeJPGNames", "cleanupGoodJPGs")
+);
 
 // gulp.task("default", gulp.series("flushAllToGood", "cleanupJpgRenamed")); //for dev
 gulp.task(
   "default",
-  gulp.series("firstSort", "renameExtensions", "renameWrongNames")
-); //for dev all
+  gulp.series(
+    "firstSort",
+    "renameExtensions",
+    "renameWrongNames",
+    "normalizeNames"
+  )
+);
 
 // console.log("\n");
-// banner("cu-backup", "ANSI Shadow");
-
-//TODO: log files change with collor
-//
+// banner("cu-presort", "ANSI Shadow");
