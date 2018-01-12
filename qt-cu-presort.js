@@ -119,8 +119,18 @@ const tryToRenameWrongAfterExifDate = () =>
     .pipe(renameAfterExifDate())
     .pipe(gulp.dest(paths.dir_cuTemp_jpgRenamed));
 
+const msg_leftInJpgFlush =
+  "If some files left in jpgFlush dir: means not all wrong named files was renamed!";
+
+const seeWhatLeftInJpgFlush = () =>
+  gulp
+    .src(paths.files_cuTemp_jpgFlush)
+    .pipe(logMsg(msg_leftInJpgFlush, { task: "warn", color: "yellow" }))
+    .pipe(logFile());
+
 gulp.task("checkNames", checkNames);
 gulp.task("tryToRenameWrongAfterExifDate", tryToRenameWrongAfterExifDate);
+gulp.task("seeWhatLeftInJpgFlush", seeWhatLeftInJpgFlush);
 
 // gulp.task("default", gulp.series("tryToRenameWrongAfterExifDate")); //for dev
 gulp.task(
@@ -129,7 +139,8 @@ gulp.task(
     "firstSort",
     "renameExtensions",
     "checkNames",
-    "tryToRenameWrongAfterExifDate"
+    "tryToRenameWrongAfterExifDate",
+    "seeWhatLeftInJpgFlush"
   )
 ); //for dev all
 
