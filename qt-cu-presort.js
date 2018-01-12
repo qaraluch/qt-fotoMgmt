@@ -57,7 +57,7 @@ const msg_leftInCu =
 const seeWhatLeft = () =>
   gulp
     .src(paths.files_cu)
-    .pipe(logMsg(msg_leftInCu, { task: "warn", color: "reset" }))
+    .pipe(logMsg(msg_leftInCu, { task: "warn", color: "yellow" }))
     .pipe(logFile());
 
 gulp.task("copyJPGs", copyJPGs);
@@ -136,4 +136,5 @@ gulp.task(
 // console.log("\n");
 // banner("cu-backup", "ANSI Shadow");
 
-//TODO: remove {}
+//TODO: log files change with collor
+//
