@@ -19,7 +19,9 @@ const filterWrongFileNames = require("./fns/filter-wrong-filenames");
 const renameAfterExifDate = require("./fns/rename-after-exif-date")(); //lazypipe
 const normalizePhotoNames = require("./fns/normalize-photo-names");
 
-//TASKS:
+/*************************************************************************
+ *  TASK: firstSort
+ *************************************************************************/
 const copyJPGs = () => {
   console.log("\n");
   banner("cu-presort", "ANSI Shadow");
@@ -74,6 +76,9 @@ gulp.task(
   gulp.series("copyJPGs", "copyJEPGs", "copyBIGJPGs", "copyMP4s", "seeWhatLeft")
 );
 
+/*************************************************************************
+ *  TASK: renameExtensions
+ *************************************************************************/
 const renameBIGJPGs = () =>
   gulp
     .src(paths.files_cuTemp_bigjpgs)
@@ -103,6 +108,9 @@ gulp.task(
   )
 );
 
+/*************************************************************************
+ *  TASK: renameWrongNames
+ *************************************************************************/
 const regexForCheckNames = /\d{4}-\d{2}-\d{2}\s\d{2}\.\d{2}\.\d{2}(-\d)?(\s)?(-)?(\s)?(.+)?\.jpg/;
 
 const checkNames = () =>
@@ -159,6 +167,9 @@ gulp.task(
   )
 );
 
+/*************************************************************************
+ *  TASK: normalizeNames
+ *************************************************************************/
 const normalizeJPGNames = () => {
   return gulp
     .src(paths.files_cuTemp_goodJPGs)
@@ -175,6 +186,9 @@ gulp.task(
   gulp.series("normalizeJPGNames", "cleanupGoodJPGs")
 );
 
+/*************************************************************************
+ *  TASK: moveToCuSort
+ *************************************************************************/
 const movePhotosToCuSort = () => {
   return gulp
     .src(paths.files_cuTemp_nomralizedNames)
@@ -191,6 +205,9 @@ gulp.task(
   gulp.series("movePhotosToCuSort", "cleanupNormalizedNames")
 );
 
+/*************************************************************************
+ *  DEFAULT
+ *************************************************************************/
 gulp.task(
   "default",
   gulp.series(
