@@ -71,6 +71,7 @@
     "gulp-exif": "0.10.0",
     "gulp-filter": "5.0.1",
     "gulp-if": "2.0.2",
+    "gulp-prompt": "1.0.1",
     "gulp-rename": "1.2.2",
     "gulp-tap": "1.0.1",
     "gulp-zip": "4.1.0",

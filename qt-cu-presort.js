@@ -2,6 +2,10 @@
 
 const gulp = require("gulp");
 
+const prompt = require("gulp-prompt");
+//[Freyskeyd/gulp-prompt: Add interactive console prompts to gulp](https://github.com/Freyskeyd/gulp-prompt)
+// npm i gulp-prompt -S
+
 // FNS:
 const paths = require("./fns/load-paths.js")("./paths.json");
 const cleanUpDir = require("./fns/cleanup-dir");
@@ -157,11 +161,18 @@ const tryToRenameWrongAfterExifDate = () =>
     .pipe(renameAfterExifDate())
     .pipe(gulp.dest(dir_cuTempJPGRenamed));
 
-const msg_moveAllToGood = "Moving all renamed files to goodJPGs dir.";
+const msg_askIfRenamedPropertly = "All files renamed correctly?";
+const msg_continue = "Continue task run?";
+const msg_warnRemainFiles =
+  "All wrong files will remain in flushJPGs (for manual renaming)";
+const msg_moveAllToGood = "Moving all renamed files to goodJPGs dir...";
 
 const flushAllToGood = () => {
   return gulp
     .src(dir_cuTempJPGRenamed + "**/*")
+    .pipe(logMsg(msg_askIfRenamedPropertly, { task: "warn", color: "reset" }))
+    .pipe(logMsg(msg_warnRemainFiles, { task: "warn", color: "reset" }))
+    .pipe(prompt.confirm({ message: msg_continue, default: true }))
     .pipe(logMsg(msg_moveAllToGood, { color: "reset" }))
     .pipe(logFile())
     .pipe(gulp.dest(dir_cuTempGoodJPGs));
@@ -250,3 +261,7 @@ gulp.task(
 );
 
 gulp.task("cleanup", () => cleanUpDir(dir_cuTemp));
+
+//TODO: add runing cleanup after all to remove flushJPGs
+// add some confirmations at the beginign
+// and so on
