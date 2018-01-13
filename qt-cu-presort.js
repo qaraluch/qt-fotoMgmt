@@ -196,13 +196,25 @@ const movePhotosToCuSort = () => {
     .pipe(gulp.dest(paths.dir_cuSort));
 };
 
+const moveMP4sToCuSort = () =>
+  gulp
+    .src(paths.files_cuTemp_mp4s)
+    .pipe(logFile())
+    .pipe(gulp.dest(paths.dir_cuSort_filmiki));
+
 gulp.task("movePhotosToCuSort", movePhotosToCuSort);
+gulp.task("moveMP4sToCuSort", moveMP4sToCuSort);
 gulp.task("cleanupNormalizedNames", () =>
   cleanUpDir(paths.dir_cuTemp_normalizedNames)
 );
+gulp.task("cleanupMp4s", () => cleanUpDir(paths.dir_cuTemp_mp4s));
 gulp.task(
   "moveToCuSort",
-  gulp.series("movePhotosToCuSort", "cleanupNormalizedNames")
+  gulp.series(
+    "movePhotosToCuSort",
+    "moveMP4sToCuSort",
+    gulp.parallel("cleanupNormalizedNames", "cleanupMp4s")
+  )
 );
 
 /*************************************************************************
