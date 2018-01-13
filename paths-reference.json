@@ -1,6 +1,10 @@
 {
-  "fotosInCu": "",
-  "fotosInCuTemp": "",
+  // Source dir Camera Upload from Dropbox
+  "cu": "",
+  // backup folder for CU
+  "cuBackup": "",
+  // Temp Dir for processing files
   "cuTemp": "",
+  // Detination Dir for cu-presort
   "cuSort": ""
 }

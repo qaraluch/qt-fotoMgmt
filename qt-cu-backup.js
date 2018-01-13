@@ -22,18 +22,24 @@ const cleanUpDir = require("./fns/cleanup-dir");
 const timeStamp = require("./fns/time-stamp");
 const banner = require("./fns/banner");
 
+/********************************
+ *  PATHS
+ ********************************/
+const dir_cu = paths.cu;
+const dir_cuBackup = paths.cuBackup;
+
 //TASKS:
 const backupCuFotos = () => {
   console.log("\n");
   banner("cu-backup", "ANSI Shadow");
   return gulp
-    .src(paths.files_cu)
+    .src(dir_cu + "**/*")
     .pipe(debug({ title: "  - " }))
     .pipe(zip(`cu-temp-arch-${timeStamp()}.zip`))
     .pipe(debug({ title: "  - " }))
-    .pipe(gulp.dest(paths.dir_cuBackup));
+    .pipe(gulp.dest(dir_cuBackup));
 };
-gulp.task("cleanupCuBack", () => cleanUpDir(paths.dir_cuBackup));
+gulp.task("cleanup", () => cleanUpDir(dir_cuBackup));
 
 gulp.task("backupCuFotos", backupCuFotos);
 

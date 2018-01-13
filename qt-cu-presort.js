@@ -25,48 +25,76 @@ const displayBanner = () => {
   return Promise.resolve();
 };
 
+/********************************
+ *  PATHS
+ ********************************/
+
+// TASK: firstSort
+const dir_cu = paths.cu;
+const dir_cuTempJPGs = paths.cuTemp + "jpgs/";
+const dir_cuTempJPEGs = paths.cuTemp + "jpegs/";
+const dir_cuTempBigJPGs = paths.cuTemp + "bigJPGs/";
+const dir_cuTempMP4s = paths.cuTemp + "mp4s/";
+
+// TASK: renameExtensions
+const dir_cuTempFlushJPGs = paths.cuTemp + "flushJPGs/";
+
+// TASK: renameWrongNames
+const dir_cuTempGoodJPGs = paths.cuTemp + "goodJPGs/";
+const dir_cuTempJPGRenamed = paths.cuTemp + "jpgRenamed/";
+
+// TASK: normalizeNames
+const dir_cuTempNormalizedNames = paths.cuTemp + "normalizedNames/";
+
+// TASK: moveToCuSort
+const dir_cuSort = paths.cuSort;
+const dir_cuSortFilmiki = paths.cuSort + "filmiki-2017/";
+
+const dir_cuTemp = paths.cuTemp;
+
 /*************************************************************************
  *  TASK: firstSort
  *************************************************************************/
+
 const copyJPGs = () => {
   return gulp
-    .src(paths.files_cu)
+    .src(dir_cu + "**/*")
     .pipe(filterByExt(".jpg"))
     .pipe(logFile())
     .pipe(deleteSrcFiles())
-    .pipe(gulp.dest(paths.dir_cuTemp_jpgs));
+    .pipe(gulp.dest(dir_cuTempJPGs));
 };
 
 const copyJEPGs = () =>
   gulp
-    .src(paths.files_cu)
+    .src(dir_cu + "**/*")
     .pipe(filterByExt(".jpeg"))
     .pipe(logFile())
     .pipe(deleteSrcFiles())
-    .pipe(gulp.dest(paths.dir_cuTemp_jpegs));
+    .pipe(gulp.dest(dir_cuTempJPEGs));
 
 const copyBIGJPGs = () =>
   gulp
-    .src(paths.files_cu)
+    .src(dir_cu + "**/*")
     .pipe(filterByExt(".JPG"))
     .pipe(logFile())
     .pipe(deleteSrcFiles())
-    .pipe(gulp.dest(paths.dir_cuTemp_bigjpgs));
+    .pipe(gulp.dest(dir_cuTempBigJPGs));
 
 const copyMP4s = () =>
   gulp
-    .src(paths.files_cu)
+    .src(dir_cu + "**/*")
     .pipe(filterByExt(".mp4"))
     .pipe(logFile())
     .pipe(deleteSrcFiles())
-    .pipe(gulp.dest(paths.dir_cuTemp_mp4s));
+    .pipe(gulp.dest(dir_cuTempMP4s));
 
 const msg_leftInCu =
   "If some files left in CU dir: means that some edgecases is not supported!";
 
 const seeWhatLeft = () =>
   gulp
-    .src(paths.files_cu)
+    .src(dir_cu + "**/*")
     .pipe(logMsg(msg_leftInCu, { task: "warn", color: "yellow" }))
     .pipe(logFile());
 
@@ -85,25 +113,25 @@ gulp.task(
  *************************************************************************/
 const renameBIGJPGs = () =>
   gulp
-    .src(paths.files_cuTemp_bigjpgs)
+    .src(dir_cuTempBigJPGs + "**/*")
     .pipe(renameExt(".JPG", ".jpg"))
-    .pipe(gulp.dest(paths.dir_cuTemp_jpgFlush));
+    .pipe(gulp.dest(dir_cuTempFlushJPGs));
 
 const renameJPEGs = () =>
   gulp
-    .src(paths.files_cuTemp_jpegs)
+    .src(dir_cuTempJPEGs + "**/*")
     .pipe(renameExt(".jpeg", ".jpg"))
-    .pipe(gulp.dest(paths.dir_cuTemp_jpgFlush));
+    .pipe(gulp.dest(dir_cuTempFlushJPGs));
 
 const moveJPGs = () =>
-  gulp.src(paths.files_cuTemp_jpgs).pipe(gulp.dest(paths.dir_cuTemp_jpgFlush));
+  gulp.src(dir_cuTempJPGs + "**/*").pipe(gulp.dest(dir_cuTempFlushJPGs));
 
 gulp.task("renameBIGJPGs", renameBIGJPGs);
-gulp.task("cleanupBIGJPGs", () => cleanUpDir(paths.dir_cuTemp_bigjpgs));
+gulp.task("cleanupBIGJPGs", () => cleanUpDir(dir_cuTempBigJPGs));
 gulp.task("renameJPEGs", renameJPEGs);
-gulp.task("cleanupJPEGs", () => cleanUpDir(paths.dir_cuTemp_jpegs));
+gulp.task("cleanupJPEGs", () => cleanUpDir(dir_cuTempJPEGs));
 gulp.task("moveJPGs", moveJPGs);
-gulp.task("cleanupJPGs", () => cleanUpDir(paths.dir_cuTemp_jpgs));
+gulp.task("cleanupJPGs", () => cleanUpDir(dir_cuTempJPGs));
 gulp.task(
   "renameExtensions",
   gulp.series(
@@ -119,46 +147,46 @@ const regexForCheckNames = /\d{4}-\d{2}-\d{2}\s\d{2}\.\d{2}\.\d{2}(-\d)?(\s)?(-)
 
 const checkNames = () =>
   gulp
-    .src(paths.files_cuTemp_jpgFlush)
+    .src(dir_cuTempFlushJPGs + "**/*")
     .pipe(filterWrongFileNames(regexForCheckNames))
     .pipe(deleteSrcFiles())
-    .pipe(gulp.dest(paths.dir_cuTemp_goodJPGs));
+    .pipe(gulp.dest(dir_cuTempGoodJPGs));
 
 const msg_tryToRename = "Try to rename files in jpgFlush dir after exif date!";
 
 const tryToRenameWrongAfterExifDate = () =>
   gulp
-    .src(paths.files_cuTemp_jpgFlush)
+    .src(dir_cuTempFlushJPGs + "**/*")
     .pipe(logFile())
     .pipe(logMsg(msg_tryToRename, { task: "warn" }))
-    .pipe(deleteSrcFiles())
+    .pipe(deleteSrcFiles()) // logic flaw!!!!!
     .pipe(renameAfterExifDate())
-    .pipe(gulp.dest(paths.dir_cuTemp_jpgRenamed));
+    .pipe(gulp.dest(dir_cuTempJPGRenamed));
 
 const msg_leftInJpgFlush =
   "If some files left in jpgFlush dir: means not all wrong named files was renamed!";
 
 const seeWhatLeftInJpgFlush = () =>
   gulp
-    .src(paths.files_cuTemp_jpgFlush)
+    .src(dir_cuTempFlushJPGs + "**/*")
     .pipe(logMsg(msg_leftInJpgFlush, { task: "warn", color: "yellow" }))
     .pipe(logFile());
 
-const msg_moveAllToGood = "Movin all renamed files to goodJPGs dir.";
+const msg_moveAllToGood = "Moving all renamed files to goodJPGs dir.";
 
 const flushAllToGood = () => {
   return gulp
-    .src(paths.files_cuTemp_jpgRenames)
+    .src(dir_cuTempJPGRenamed + "**/*")
     .pipe(logMsg(msg_moveAllToGood, { color: "reset" }))
     .pipe(logFile())
-    .pipe(gulp.dest(paths.dir_cuTemp_goodJPGs));
+    .pipe(gulp.dest(dir_cuTempGoodJPGs));
 };
 
 gulp.task("checkNames", checkNames);
 gulp.task("tryToRenameWrongAfterExifDate", tryToRenameWrongAfterExifDate);
 gulp.task("seeWhatLeftInJpgFlush", seeWhatLeftInJpgFlush);
 gulp.task("flushAllToGood", flushAllToGood);
-gulp.task("cleanupJpgRenamed", () => cleanUpDir(paths.dir_cuTemp_jpgRenamed));
+gulp.task("cleanupJpgRenamed", () => cleanUpDir(dir_cuTempJPGRenamed));
 gulp.task(
   "renameWrongNames",
   gulp.series(
@@ -176,14 +204,14 @@ gulp.task(
  *************************************************************************/
 const normalizeJPGNames = () => {
   return gulp
-    .src(paths.files_cuTemp_goodJPGs)
+    .src(dir_cuTempGoodJPGs + "**/*")
     .pipe(logFile())
     .pipe(normalizePhotoNames())
-    .pipe(gulp.dest(paths.dir_cuTemp_normalizedNames));
+    .pipe(gulp.dest(dir_cuTempNormalizedNames));
 };
 
 gulp.task("normalizeJPGNames", normalizeJPGNames);
-gulp.task("cleanupGoodJPGs", () => cleanUpDir(paths.dir_cuTemp_goodJPGs));
+gulp.task("cleanupGoodJPGs", () => cleanUpDir(dir_cuTempGoodJPGs));
 
 gulp.task(
   "normalizeNames",
@@ -195,23 +223,23 @@ gulp.task(
  *************************************************************************/
 const movePhotosToCuSort = () => {
   return gulp
-    .src(paths.files_cuTemp_nomralizedNames)
+    .src(dir_cuTempNormalizedNames + "**/*")
     .pipe(logFile())
-    .pipe(gulp.dest(paths.dir_cuSort));
+    .pipe(gulp.dest(dir_cuSort));
 };
 
 const moveMP4sToCuSort = () =>
   gulp
-    .src(paths.files_cuTemp_mp4s)
+    .src(dir_cuTempMP4s + "**/*")
     .pipe(logFile())
-    .pipe(gulp.dest(paths.dir_cuSort_filmiki));
+    .pipe(gulp.dest(dir_cuSortFilmiki));
 
 gulp.task("movePhotosToCuSort", movePhotosToCuSort);
 gulp.task("moveMP4sToCuSort", moveMP4sToCuSort);
 gulp.task("cleanupNormalizedNames", () =>
-  cleanUpDir(paths.dir_cuTemp_normalizedNames)
+  cleanUpDir(dir_cuTempNormalizedNames)
 );
-gulp.task("cleanupMp4s", () => cleanUpDir(paths.dir_cuTemp_mp4s));
+gulp.task("cleanupMp4s", () => cleanUpDir(dir_cuTempMP4s));
 gulp.task(
   "moveToCuSort",
   gulp.series(
@@ -238,4 +266,4 @@ gulp.task(
   )
 );
 
-gulp.task("cleanup", () => cleanUpDir(paths.dir_cuTemp));
+gulp.task("cleanup", () => cleanUpDir(dir_cuTemp));
