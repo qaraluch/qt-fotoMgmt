@@ -44,7 +44,6 @@ const dir_cuTempNormalizedNames = paths.cuTemp + "normalizedNames/";
 
 // TASK: moveToCuSort
 const dir_cuSort = paths.cuSort;
-const dir_cuSortFilmiki = paths.cuSort + "filmiki-2017/";
 
 const dir_cuTemp = paths.cuTemp;
 
@@ -228,7 +227,7 @@ const moveMP4sToCuSort = () =>
   gulp
     .src(dir_cuTempMP4s + "**/*")
     .pipe(logFile())
-    .pipe(gulp.dest(dir_cuSortFilmiki));
+    .pipe(gulp.dest(dir_cuSort));
 
 gulp.task("movePhotosToCuSort", movePhotosToCuSort);
 gulp.task("moveMP4sToCuSort", moveMP4sToCuSort);
