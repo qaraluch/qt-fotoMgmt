@@ -154,18 +154,8 @@ const tryToRenameWrongAfterExifDate = () =>
     .src(dir_cuTempFlushJPGs + "**/*")
     .pipe(logFile())
     .pipe(logMsg(msg_tryToRename, { task: "warn" }))
-    .pipe(deleteSrcFiles()) // logic flaw!!!!!
     .pipe(renameAfterExifDate())
     .pipe(gulp.dest(dir_cuTempJPGRenamed));
-
-const msg_leftInJpgFlush =
-  "If some files left in jpgFlush dir: means not all wrong named files was renamed!";
-
-const seeWhatLeftInJpgFlush = () =>
-  gulp
-    .src(dir_cuTempFlushJPGs + "**/*")
-    .pipe(logMsg(msg_leftInJpgFlush, { task: "warn", color: "yellow" }))
-    .pipe(logFile());
 
 const msg_moveAllToGood = "Moving all renamed files to goodJPGs dir.";
 
@@ -179,7 +169,6 @@ const flushAllToGood = () => {
 
 gulp.task("checkNames", checkNames);
 gulp.task("tryToRenameWrongAfterExifDate", tryToRenameWrongAfterExifDate);
-gulp.task("seeWhatLeftInJpgFlush", seeWhatLeftInJpgFlush);
 gulp.task("flushAllToGood", flushAllToGood);
 gulp.task("cleanupJpgRenamed", () => cleanUpDir(dir_cuTempJPGRenamed));
 gulp.task(
@@ -187,7 +176,6 @@ gulp.task(
   gulp.series(
     "checkNames",
     "tryToRenameWrongAfterExifDate",
-    "seeWhatLeftInJpgFlush",
     "flushAllToGood",
     "cleanupJpgRenamed"
     // jpgFlush will remain due to some files may not be renamed
