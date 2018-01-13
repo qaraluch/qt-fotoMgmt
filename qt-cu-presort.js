@@ -19,12 +19,16 @@ const filterWrongFileNames = require("./fns/filter-wrong-filenames");
 const renameAfterExifDate = require("./fns/rename-after-exif-date")(); //lazypipe
 const normalizePhotoNames = require("./fns/normalize-photo-names");
 
+const displayBanner = () => {
+  console.log("\n");
+  banner("cu-presort", "ANSI Shadow");
+  return Promise.resolve();
+};
+
 /*************************************************************************
  *  TASK: firstSort
  *************************************************************************/
 const copyJPGs = () => {
-  console.log("\n");
-  banner("cu-presort", "ANSI Shadow");
   return gulp
     .src(paths.files_cu)
     .pipe(filterByExt(".jpg"))
@@ -220,9 +224,12 @@ gulp.task(
 /*************************************************************************
  *  DEFAULT
  *************************************************************************/
+gulp.task("displayBanner", displayBanner);
+
 gulp.task(
   "default",
   gulp.series(
+    "displayBanner",
     "firstSort",
     "renameExtensions",
     "renameWrongNames",
