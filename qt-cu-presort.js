@@ -230,3 +230,5 @@ gulp.task(
     "moveToCuSort"
   )
 );
+
+gulp.task("cleanup", () => cleanUpDir(paths.dir_cuTemp));
