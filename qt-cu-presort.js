@@ -2,10 +2,6 @@
 
 const gulp = require("gulp");
 
-const log = require("fancy-log");
-// [js-cli/fancy-log: Log things, prefixed with a timestamp](https://github.com/js-cli/fancy-log)
-// npm i fancy-log -S
-
 // FNS:
 const paths = require("./fns/load-paths.js")("./paths.json");
 const cleanUpDir = require("./fns/cleanup-dir");
