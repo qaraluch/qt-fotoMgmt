@@ -15,6 +15,7 @@ const paths = require("./fns/load-paths.js")("./paths.json");
 const cleanUpDir = require("./fns/cleanup-dir");
 const timeStamp = require("./fns/time-stamp");
 const banner = require("./fns/banner");
+const confirmTask = require("./fns/confirm-task");
 
 /********************************
  *  PATHS
@@ -31,9 +32,23 @@ const backupCuFotos = () => {
     .pipe(debug({ title: "  - " }))
     .pipe(gulp.dest(dir_cuBackup));
 };
-gulp.task("cleanupBackup", () => cleanUpDir(dir_cuBackup));
 
 gulp.task("backupCuFotos", backupCuFotos);
-gulp.task("displayBanner", () => banner("cu-backup", "ANSI Shadow"));
 
-gulp.task("default", gulp.series("displayBanner", "backupCuFotos"));
+gulp.task("confirmRun", confirmTask("Do you want to run this task?"));
+gulp.task(
+  "confirmRemoveBackups",
+  confirmTask("Do you want to remove all cu backup files (.zips)?")
+);
+gulp.task("displayBanner", () => banner("cu-backup", "ANSI Shadow"));
+gulp.task("cleanUpBackups", () => cleanUpDir(dir_cuBackup));
+
+gulp.task(
+  "default",
+  gulp.series("displayBanner", "confirmRun", "backupCuFotos")
+);
+
+gulp.task(
+  "removeBackups",
+  gulp.series("confirmRemoveBackups", "cleanUpBackups")
+);
