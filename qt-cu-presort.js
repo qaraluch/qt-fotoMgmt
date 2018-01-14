@@ -240,12 +240,6 @@ gulp.task(
 /*************************************************************************
  *  DEFAULT
  *************************************************************************/
-const displayBanner = () => {
-  console.log("\n");
-  banner("cu-presort", "ANSI Shadow");
-  return Promise.resolve();
-};
-
 gulp.task("confirmRun", () => {
   const question = {
     message: "Do you want to continue?",
@@ -264,7 +258,7 @@ gulp.task("confirmCleanUp", () => {
   return gulp.src("./package.json").pipe(prompt.confirm(question));
 });
 
-gulp.task("displayBanner", displayBanner);
+gulp.task("displayBanner", () => banner("cu-presort", "ANSI Shadow"));
 gulp.task("cleanup", () => cleanUpDir(dir_cuTemp));
 
 gulp.task(

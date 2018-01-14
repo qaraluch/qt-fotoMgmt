@@ -24,8 +24,6 @@ const dir_cuBackup = paths.cuBackup;
 
 //TASKS:
 const backupCuFotos = () => {
-  console.log("\n");
-  banner("cu-backup", "ANSI Shadow");
   return gulp
     .src(dir_cu + "**/*")
     .pipe(debug({ title: "  - " }))
@@ -33,8 +31,9 @@ const backupCuFotos = () => {
     .pipe(debug({ title: "  - " }))
     .pipe(gulp.dest(dir_cuBackup));
 };
-gulp.task("cleanup", () => cleanUpDir(dir_cuBackup));
+gulp.task("cleanupBackup", () => cleanUpDir(dir_cuBackup));
 
 gulp.task("backupCuFotos", backupCuFotos);
+gulp.task("displayBanner", () => banner("cu-backup", "ANSI Shadow"));
 
-gulp.task("default", gulp.series("backupCuFotos"));
+gulp.task("default", gulp.series("displayBanner", "backupCuFotos"));
