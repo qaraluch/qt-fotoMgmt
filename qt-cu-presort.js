@@ -19,12 +19,6 @@ const filterWrongFileNames = require("./fns/filter-wrong-filenames");
 const renameAfterExifDate = require("./fns/rename-after-exif-date")(); //lazypipe
 const normalizePhotoNames = require("./fns/normalize-photo-names");
 
-const displayBanner = () => {
-  console.log("\n");
-  banner("cu-presort", "ANSI Shadow");
-  return Promise.resolve();
-};
-
 /********************************
  *  PATHS
  ********************************/
@@ -246,22 +240,44 @@ gulp.task(
 /*************************************************************************
  *  DEFAULT
  *************************************************************************/
+const displayBanner = () => {
+  console.log("\n");
+  banner("cu-presort", "ANSI Shadow");
+  return Promise.resolve();
+};
+
+gulp.task("confirmRun", () => {
+  const question = {
+    message: "Do you want to continue?",
+    default: true
+  };
+  // ugly
+  return gulp.src("./package.json").pipe(prompt.confirm(question));
+});
+
+gulp.task("confirmCleanUp", () => {
+  const question = {
+    message: "Do you want to clean up cuTemp dir?",
+    default: true
+  };
+  // ugly
+  return gulp.src("./package.json").pipe(prompt.confirm(question));
+});
+
 gulp.task("displayBanner", displayBanner);
+gulp.task("cleanup", () => cleanUpDir(dir_cuTemp));
 
 gulp.task(
   "default",
   gulp.series(
     "displayBanner",
+    "confirmRun",
     "firstSort",
     "renameExtensions",
     "renameWrongNames",
     "normalizeNames",
-    "moveToCuSort"
+    "moveToCuSort",
+    "confirmCleanUp",
+    "cleanup"
   )
 );
-
-gulp.task("cleanup", () => cleanUpDir(dir_cuTemp));
-
-//TODO: add runing cleanup after all to remove flushJPGs
-// add some confirmations at the beginign
-// and so on
