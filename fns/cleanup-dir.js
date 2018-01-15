@@ -3,5 +3,5 @@ const del = require("del");
 // npm i del -S
 
 module.exports = function cleanUpDir(path) {
-  return del(path);
+  return del(path, { force: true });
 };

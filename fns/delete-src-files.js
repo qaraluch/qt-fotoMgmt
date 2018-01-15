@@ -7,5 +7,5 @@ const del = require("del");
 // npm i del -S
 
 module.exports = function deleteSrcFiles() {
-  return vinylPaths(file => del(file));
+  return vinylPaths(file => del(file, { force: true }));
 };
