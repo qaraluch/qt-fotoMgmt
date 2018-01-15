@@ -7,8 +7,8 @@ const prompt = require("gulp-prompt");
 // npm i gulp-prompt -S
 
 // FNS:
-// const paths = require("./fns/load-paths.js")("./paths-dev.json");
-const paths = require("./fns/load-paths.js")("./paths.json");
+const paths = require("./fns/load-paths.js")("./paths.json", "QT_FOTOMGMT");
+// Different paths are loaded. It is based on env variable: $QT_FOTOMGMT (dev/prod).
 const cleanUpDir = require("./fns/cleanup-dir");
 const banner = require("./fns/banner");
 const filterByExt = require("./fns/filter-by-ext");

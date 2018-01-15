@@ -11,7 +11,7 @@ const zip = require("gulp-zip");
 // npm i gulp-zip -S
 
 // FNS:
-const paths = require("./fns/load-paths.js")("./paths.json");
+const paths = require("./fns/load-paths.js")("./paths.json", "QT_FOTOMGMT");
 const cleanUpDir = require("./fns/cleanup-dir");
 const timeStamp = require("./fns/time-stamp");
 const banner = require("./fns/banner");
