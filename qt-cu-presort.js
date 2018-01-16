@@ -131,7 +131,9 @@ const renameJPEGs = () =>
   gulp
     .src(dir_cuTempJPEGs + "**/*")
     .pipe(renameExt(".jpeg", ".jpg"))
-    .pipe(bumpFotoVersion()) // bump ver to avoid overwriting modified fotos
+    .pipe(bumpFotoVersion(1))
+    // bump ver to avoid overwriting modified fotos
+    // 1 due to jpegs are modified ones so must have next version
     .pipe(logFile())
     .pipe(gulp.dest(dir_cuTempFlushJPGs));
 

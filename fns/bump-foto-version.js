@@ -10,7 +10,8 @@ const log = require("fancy-log");
 
 const rgx = /(.+\.\d{2}-)(\d)/;
 
-module.exports = function bumpFotoVersion(regex) {
+module.exports = function bumpFotoVersion(from = 0) {
+  // from - when no ver found start numering from number
   return rename(path => {
     const logIt = () =>
       log(`    -  bum version:  ${chalk.green(path.basename + path.extname)}`);
@@ -22,7 +23,7 @@ module.exports = function bumpFotoVersion(regex) {
       path.basename = newBase;
       logIt();
     } else {
-      path.basename += "-1";
+      path.basename += `-${from}`;
       logIt();
     }
   });
