@@ -20,6 +20,7 @@ const filterWrongFileNames = require("./fns/filter-wrong-filenames");
 const renameAfterExifDate = require("./fns/rename-after-exif-date")(); //lazypipe
 const normalizePhotoNames = require("./fns/normalize-photo-names");
 const confirmTask = require("./fns/confirm-task");
+const bumpFotoVersion = require("./fns/bump-foto-version");
 
 /********************************
  *  PATHS
@@ -116,6 +117,8 @@ const renameJPEGs = () =>
   gulp
     .src(dir_cuTempJPEGs + "**/*")
     .pipe(renameExt(".jpeg", ".jpg"))
+    .pipe(bumpFotoVersion()) // bump ver to avoid overwriting modified fotos
+    .pipe(logFile())
     .pipe(gulp.dest(dir_cuTempFlushJPGs));
 
 const moveJPGs = () =>
