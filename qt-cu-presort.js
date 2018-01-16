@@ -28,6 +28,8 @@ const bumpFotoVersion = require("./fns/bump-foto-version");
 
 // TASK: firstSort
 const dir_cu = paths.cu;
+
+const dir_cuTempCopyCu = paths.cuTemp + "cuCopy/";
 const dir_cuTempJPGs = paths.cuTemp + "jpgs/";
 const dir_cuTempJPEGs = paths.cuTemp + "jpegs/";
 const dir_cuTempBigJPGs = paths.cuTemp + "bigJPGs/";
@@ -49,12 +51,24 @@ const dir_cuSort = paths.cuSort;
 const dir_cuTemp = paths.cuTemp;
 
 /*************************************************************************
+ *  TASK: copyCu
+ *************************************************************************/
+const makeCuCopy = () =>
+  gulp
+    .src(dir_cu + "**/*")
+    .pipe(logFile())
+    .pipe(deleteSrcFiles())
+    .pipe(gulp.dest(dir_cuTempCopyCu));
+
+gulp.task("makeCuCopy", makeCuCopy);
+
+/*************************************************************************
  *  TASK: firstSort
  *************************************************************************/
 
 const copyJPGs = () => {
   return gulp
-    .src(dir_cu + "**/*")
+    .src(dir_cuTempCopyCu + "**/*")
     .pipe(filterByExt(".jpg"))
     .pipe(logFile())
     .pipe(deleteSrcFiles())
@@ -63,7 +77,7 @@ const copyJPGs = () => {
 
 const copyJEPGs = () =>
   gulp
-    .src(dir_cu + "**/*")
+    .src(dir_cuTempCopyCu + "**/*")
     .pipe(filterByExt(".jpeg"))
     .pipe(logFile())
     .pipe(deleteSrcFiles())
@@ -71,7 +85,7 @@ const copyJEPGs = () =>
 
 const copyBIGJPGs = () =>
   gulp
-    .src(dir_cu + "**/*")
+    .src(dir_cuTempCopyCu + "**/*")
     .pipe(filterByExt(".JPG"))
     .pipe(logFile())
     .pipe(deleteSrcFiles())
@@ -79,18 +93,18 @@ const copyBIGJPGs = () =>
 
 const copyMP4s = () =>
   gulp
-    .src(dir_cu + "**/*")
+    .src(dir_cuTempCopyCu + "**/*")
     .pipe(filterByExt(".mp4"))
     .pipe(logFile())
     .pipe(deleteSrcFiles())
     .pipe(gulp.dest(dir_cuTempMP4s));
 
 const msg_leftInCu =
-  "If some files left in CU dir: means that some edgecases is not supported!";
+  "If some files left in cuCopy dir: means that some edgecases is not supported!?";
 
 const seeWhatLeft = () =>
   gulp
-    .src(dir_cu + "**/*")
+    .src(dir_cuTempCopyCu + "**/*")
     .pipe(logMsg(msg_leftInCu, { task: "warn", color: "yellow" }))
     .pipe(logFile());
 
@@ -256,6 +270,7 @@ gulp.task(
   gulp.series(
     "displayBanner",
     "confirmRun",
+    "makeCuCopy",
     "firstSort",
     "renameExtensions",
     "renameWrongNames",
