@@ -27,6 +27,20 @@ const normalizePhotoNames = require("./fns/normalize-photo-names");
 const confirmTask = require("./fns/confirm-task");
 const bumpFotoVersion = require("./fns/bump-foto-version");
 const countFiles = require("./fns/count-files");
+const tester = require("./fns/tester");
+
+/********************************
+ *  TESTER
+ ********************************/
+const myTester = tester();
+
+gulp.task("test", () => {
+  myTester.show();
+  return Promise.resolve();
+});
+
+const spawnTesterCb = propertyName => count =>
+  myTester.add(propertyName, count);
 
 /********************************
  *  PATHS
@@ -67,7 +81,7 @@ const makeCuCopy = () =>
     .src(dir_cu + "**/*")
     .pipe(deleteSrcFiles())
     .pipe(logFile(msg_forLogFile))
-    .pipe(countFiles(msg_countFiles))
+    .pipe(countFiles(msg_countFiles, spawnTesterCb("cu")))
     .pipe(gulp.dest(dir_cuTempCopyCu));
 
 gulp.task(
@@ -124,7 +138,7 @@ const copyMP4s = () =>
     .pipe(filterByExt(".mp4"))
     .pipe(debug({ title: " - " }))
     .pipe(deleteSrcFiles())
-    .pipe(countFiles(msg_mp4s))
+    .pipe(countFiles(msg_mp4s, spawnTesterCb("mp4s")))
     .pipe(gulp.dest(dir_cuTempMP4s));
 
 const msg_leftInCu =
@@ -135,7 +149,7 @@ const seeWhatLeft = () =>
     .src(dir_cuTempCopyCu + "**/*")
     .pipe(logMsg(msg_leftInCu, { task: "warn", color: "yellow" }))
     .pipe(logFile(msg_forLogFile))
-    .pipe(countFiles(msg_left));
+    .pipe(countFiles(msg_left, spawnTesterCb("left")));
 
 gulp.task(
   "LogDoneFirstSort",
@@ -306,7 +320,7 @@ const movePhotosToCuSort = () => {
   return gulp
     .src(dir_cuTempNormalizedNames + "**/*")
     .pipe(logFile(msg_forLogFile))
-    .pipe(countFiles(msg_moveFotoCuSort))
+    .pipe(countFiles(msg_moveFotoCuSort, spawnTesterCb("jpgs")))
     .pipe(gulp.dest(dir_cuSort));
 };
 
@@ -370,6 +384,7 @@ gulp.task(
     "moveToCuSort",
     "confirmCleanUp",
     "cleanup",
-    "LogDoneCleanup"
+    "LogDoneCleanup",
+    "test"
   )
 );
