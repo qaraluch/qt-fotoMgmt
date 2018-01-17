@@ -2,8 +2,8 @@ const add = function add(property, value) {
   this[property] = value;
 };
 
-const show = function show() {
-  console.log(this);
+const show = function show(cb) {
+  cb && cb(this);
 };
 
 module.exports = function tester(options = {}) {
