@@ -28,36 +28,18 @@ const confirmTask = require("./fns/confirm-task");
 const bumpFotoVersion = require("./fns/bump-foto-version");
 const countFiles = require("./fns/count-files");
 const tester = require("./fns/tester");
+const testerReport = require("./fns/tester-report-presort");
 
 /********************************
  *  TESTER
  ********************************/
-const log = require("fancy-log");
-// [js-cli/fancy-log: Log things, prefixed with a timestamp](https://github.com/js-cli/fancy-log)
-// npm i fancy-log -S
-
-const chalk = require("chalk");
-
 const presortTester = tester();
-
-const presortTesterReport = counters => {
-  const { cu, mp4s, left, jpgs } = counters;
-  const test = cu === mp4s + left + jpgs;
-  if (test) log(`Tests: ${chalk.green("OK")}`);
-  else log(`Tests: ${chalk.red("Not OK")}`);
-  log("Files count from CU: ", cu);
-  log(`${test ? chalk.green("equals") : chalk.red("not equals")} of sum of:`);
-  log("   - jpgs:", jpgs);
-  log("   - mp4s:", mp4s);
-  log("   - left:", left);
-  test || log(`${chalk.red("Double check results!!!")}`);
-};
 
 const spawnTesterCb = propertyName => count =>
   presortTester.add(propertyName, count);
 
 gulp.task("testing", () => {
-  presortTester.show(presortTesterReport);
+  presortTester.show(testerReport);
   return Promise.resolve();
 });
 
