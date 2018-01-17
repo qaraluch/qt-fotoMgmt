@@ -21,6 +21,7 @@ const renameAfterExifDate = require("./fns/rename-after-exif-date")(); //lazypip
 const normalizePhotoNames = require("./fns/normalize-photo-names");
 const confirmTask = require("./fns/confirm-task");
 const bumpFotoVersion = require("./fns/bump-foto-version");
+const countFiles = require("./fns/count-files");
 
 /********************************
  *  PATHS
@@ -53,11 +54,13 @@ const dir_cuTemp = paths.cuTemp;
 /*************************************************************************
  *  TASK: copyCu
  *************************************************************************/
+const msg_copyCu = "Moved fotos from cu dir";
 const makeCuCopy = () =>
   gulp
     .src(dir_cu + "**/*")
     .pipe(logFile())
     .pipe(deleteSrcFiles())
+    .pipe(countFiles(msg_copyCu))
     .pipe(gulp.dest(dir_cuTempCopyCu));
 
 gulp.task("makeCuCopy", makeCuCopy);
@@ -65,6 +68,11 @@ gulp.task("makeCuCopy", makeCuCopy);
 /*************************************************************************
  *  TASK: firstSort
  *************************************************************************/
+const msg_jpgs = "Moved jpgs";
+const msg_jpegs = "Moved jpegs";
+const msg_bigJPGs = "Moved JPGs";
+const msg_mp4s = "Moved mp4s";
+const msg_left = "Left files";
 
 const copyJPGs = () => {
   return gulp
@@ -72,6 +80,7 @@ const copyJPGs = () => {
     .pipe(filterByExt(".jpg"))
     .pipe(logFile())
     .pipe(deleteSrcFiles())
+    .pipe(countFiles(msg_jpgs))
     .pipe(gulp.dest(dir_cuTempJPGs));
 };
 
@@ -81,6 +90,7 @@ const copyJEPGs = () =>
     .pipe(filterByExt(".jpeg"))
     .pipe(logFile())
     .pipe(deleteSrcFiles())
+    .pipe(countFiles(msg_jpegs))
     .pipe(gulp.dest(dir_cuTempJPEGs));
 
 const copyBIGJPGs = () =>
@@ -89,6 +99,7 @@ const copyBIGJPGs = () =>
     .pipe(filterByExt(".JPG"))
     .pipe(logFile())
     .pipe(deleteSrcFiles())
+    .pipe(countFiles(msg_bigJPGs))
     .pipe(gulp.dest(dir_cuTempBigJPGs));
 
 const copyMP4s = () =>
@@ -97,6 +108,7 @@ const copyMP4s = () =>
     .pipe(filterByExt(".mp4"))
     .pipe(logFile())
     .pipe(deleteSrcFiles())
+    .pipe(countFiles(msg_mp4s))
     .pipe(gulp.dest(dir_cuTempMP4s));
 
 const msg_leftInCu =
@@ -106,7 +118,9 @@ const seeWhatLeft = () =>
   gulp
     .src(dir_cuTempCopyCu + "**/*")
     .pipe(logMsg(msg_leftInCu, { task: "warn", color: "yellow" }))
-    .pipe(logFile());
+    .pipe(logFile())
+    .pipe(countFiles(msg_left));
+//TODO: add custom logs files;
 
 gulp.task("copyJPGs", copyJPGs);
 gulp.task("copyJEPGs", copyJEPGs);
@@ -230,10 +244,14 @@ gulp.task(
 /*************************************************************************
  *  TASK: moveToCuSort
  *************************************************************************/
+const msg_moveFotoCuSort = "Moved fotos to cuSort";
+const msg_moveVidCuSort = "Moved videos to cuSort";
+
 const movePhotosToCuSort = () => {
   return gulp
     .src(dir_cuTempNormalizedNames + "**/*")
     .pipe(logFile())
+    .pipe(countFiles(msg_moveFotoCuSort))
     .pipe(gulp.dest(dir_cuSort));
 };
 
@@ -241,6 +259,7 @@ const moveMP4sToCuSort = () =>
   gulp
     .src(dir_cuTempMP4s + "**/*")
     .pipe(logFile())
+    .pipe(countFiles(msg_moveVidCuSort))
     .pipe(gulp.dest(dir_cuSort));
 
 gulp.task("movePhotosToCuSort", movePhotosToCuSort);
