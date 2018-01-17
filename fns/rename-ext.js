@@ -10,7 +10,7 @@ const log = require("fancy-log");
 
 module.exports = function renameExt(from, to) {
   const renameAndLogIt = path => {
-    log(`    -  renamed file: ${chalk.green(path.basename + to)}`);
+    log(`      - renamed file: ${chalk.green(path.basename + to)}`);
     return to;
   };
   return rename(path => {

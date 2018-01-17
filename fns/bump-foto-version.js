@@ -14,7 +14,9 @@ module.exports = function bumpFotoVersion(from = 0) {
   // from - when no ver found start numering from number
   return rename(path => {
     const logIt = () =>
-      log(`    -  bum version:  ${chalk.green(path.basename + path.extname)}`);
+      log(
+        `        - and bump ver.:  ${chalk.green(path.basename + path.extname)}`
+      );
     let verNo = rgx.exec(path.basename);
     if (verNo) {
       const base = verNo && verNo[1];

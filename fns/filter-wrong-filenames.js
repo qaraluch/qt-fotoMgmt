@@ -14,7 +14,7 @@ module.exports = function filterWrongFileNames(regex) {
     let test = regex.test(file.path);
     test ||
       log(
-        `    -  detected wrong file name: ${chalk.yellow(
+        `      - detected wrong file name: ${chalk.yellow(
           path.relative(file.base, file.path)
         )}`
       );

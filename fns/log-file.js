@@ -11,8 +11,8 @@ const through = require("through2");
 
 module.exports = function logFile(msg = " - ") {
   let stream = through.obj((file, enc, cb) => {
-    const basename = path.relative(file.base, file.path);
-    log(`${msg}${chalk.blue(basename)}.`);
+    const basename = path.basename(file.path);
+    log(`${msg}${chalk.reset(basename)}.`);
     cb(null, file);
   });
   return stream;

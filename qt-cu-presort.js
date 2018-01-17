@@ -6,6 +6,10 @@ const prompt = require("gulp-prompt");
 //[Freyskeyd/gulp-prompt: Add interactive console prompts to gulp](https://github.com/Freyskeyd/gulp-prompt)
 // npm i gulp-prompt -S
 
+const debug = require("gulp-debug");
+// [sindresorhus/gulp-debug: ](https://github.com/sindresorhus/gulp-debug)
+// npm i gulp-debug -D
+
 // FNS:
 const paths = require("./fns/load-paths.js")("./paths.json", "QT_FOTOMGMT");
 // Different paths are loaded. It is based on env variable: $QT_FOTOMGMT (dev/prod).
@@ -15,6 +19,7 @@ const filterByExt = require("./fns/filter-by-ext");
 const deleteSrcFiles = require("./fns/delete-src-files");
 const logFile = require("./fns/log-file");
 const logMsg = require("./fns/log-msg");
+const logTask = require("./fns/log-task");
 const renameExt = require("./fns/rename-ext");
 const filterWrongFileNames = require("./fns/filter-wrong-filenames");
 const renameAfterExifDate = require("./fns/rename-after-exif-date")(); //lazypipe
@@ -54,31 +59,42 @@ const dir_cuTemp = paths.cuTemp;
 /*************************************************************************
  *  TASK: copyCu
  *************************************************************************/
-const msg_copyCu = "Moved fotos from cu dir";
+const msg_countFiles = "        Total";
+const msg_forLogFile = "      - ";
+
 const makeCuCopy = () =>
   gulp
     .src(dir_cu + "**/*")
-    .pipe(logFile())
     .pipe(deleteSrcFiles())
-    .pipe(countFiles(msg_copyCu))
+    .pipe(logFile(msg_forLogFile))
+    .pipe(countFiles(msg_countFiles))
     .pipe(gulp.dest(dir_cuTempCopyCu));
 
+gulp.task(
+  "LogDoneCuCopy",
+  logTask("Moved photos to cuCopy dir.", {
+    task: "done",
+    color: "green"
+  })
+);
+
 gulp.task("makeCuCopy", makeCuCopy);
+gulp.task("cuCopy", gulp.series("makeCuCopy", "LogDoneCuCopy"));
 
 /*************************************************************************
  *  TASK: firstSort
  *************************************************************************/
-const msg_jpgs = "Moved jpgs";
-const msg_jpegs = "Moved jpegs";
-const msg_bigJPGs = "Moved JPGs";
-const msg_mp4s = "Moved mp4s";
-const msg_left = "Left files";
+const msg_jpgs = "        Total jpgs";
+const msg_jpegs = "        Total jpegs";
+const msg_bigJPGs = "        Total JPGs";
+const msg_mp4s = "        Total mp4s";
+const msg_left = "        Total";
 
 const copyJPGs = () => {
   return gulp
     .src(dir_cuTempCopyCu + "**/*")
     .pipe(filterByExt(".jpg"))
-    .pipe(logFile())
+    .pipe(debug({ title: " - " }))
     .pipe(deleteSrcFiles())
     .pipe(countFiles(msg_jpgs))
     .pipe(gulp.dest(dir_cuTempJPGs));
@@ -88,7 +104,7 @@ const copyJEPGs = () =>
   gulp
     .src(dir_cuTempCopyCu + "**/*")
     .pipe(filterByExt(".jpeg"))
-    .pipe(logFile())
+    .pipe(debug({ title: " - " }))
     .pipe(deleteSrcFiles())
     .pipe(countFiles(msg_jpegs))
     .pipe(gulp.dest(dir_cuTempJPEGs));
@@ -97,7 +113,7 @@ const copyBIGJPGs = () =>
   gulp
     .src(dir_cuTempCopyCu + "**/*")
     .pipe(filterByExt(".JPG"))
-    .pipe(logFile())
+    .pipe(debug({ title: " - " }))
     .pipe(deleteSrcFiles())
     .pipe(countFiles(msg_bigJPGs))
     .pipe(gulp.dest(dir_cuTempBigJPGs));
@@ -106,21 +122,28 @@ const copyMP4s = () =>
   gulp
     .src(dir_cuTempCopyCu + "**/*")
     .pipe(filterByExt(".mp4"))
-    .pipe(logFile())
+    .pipe(debug({ title: " - " }))
     .pipe(deleteSrcFiles())
     .pipe(countFiles(msg_mp4s))
     .pipe(gulp.dest(dir_cuTempMP4s));
 
 const msg_leftInCu =
-  "If some files left in cuCopy dir: means that some edgecases is not supported!?";
+  "Some files left in cuCopy dir (some edgecases is not supported!?)";
 
 const seeWhatLeft = () =>
   gulp
     .src(dir_cuTempCopyCu + "**/*")
     .pipe(logMsg(msg_leftInCu, { task: "warn", color: "yellow" }))
-    .pipe(logFile())
+    .pipe(logFile(msg_forLogFile))
     .pipe(countFiles(msg_left));
-//TODO: add custom logs files;
+
+gulp.task(
+  "LogDoneFirstSort",
+  logTask("Sort photos by extensions.", {
+    task: "done",
+    color: "green"
+  })
+);
 
 gulp.task("copyJPGs", copyJPGs);
 gulp.task("copyJEPGs", copyJEPGs);
@@ -129,7 +152,14 @@ gulp.task("copyMP4s", copyMP4s);
 gulp.task("seeWhatLeft", seeWhatLeft);
 gulp.task(
   "firstSort",
-  gulp.series("copyJPGs", "copyJEPGs", "copyBIGJPGs", "copyMP4s", "seeWhatLeft")
+  gulp.series(
+    "copyJPGs",
+    "copyJEPGs",
+    "copyBIGJPGs",
+    "copyMP4s",
+    "seeWhatLeft",
+    "LogDoneFirstSort"
+  )
 );
 
 /*************************************************************************
@@ -148,11 +178,18 @@ const renameJPEGs = () =>
     .pipe(bumpFotoVersion(1))
     // bump ver to avoid overwriting modified fotos
     // 1 due to jpegs are modified ones so must have next version
-    .pipe(logFile())
     .pipe(gulp.dest(dir_cuTempFlushJPGs));
 
 const moveJPGs = () =>
   gulp.src(dir_cuTempJPGs + "**/*").pipe(gulp.dest(dir_cuTempFlushJPGs));
+
+gulp.task(
+  "LogDoneExtRename",
+  logTask("Renamed photos by their extensions.", {
+    task: "done",
+    color: "green"
+  })
+);
 
 gulp.task("renameBIGJPGs", renameBIGJPGs);
 gulp.task("cleanupBIGJPGs", () => cleanUpDir(dir_cuTempBigJPGs));
@@ -164,13 +201,15 @@ gulp.task(
   "renameExtensions",
   gulp.series(
     gulp.parallel("renameBIGJPGs", "renameJPEGs", "moveJPGs"),
-    gulp.parallel("cleanupBIGJPGs", "cleanupJPEGs", "cleanupJPGs")
+    gulp.parallel("cleanupBIGJPGs", "cleanupJPEGs", "cleanupJPGs"),
+    "LogDoneExtRename"
   )
 );
 
 /*************************************************************************
  *  TASK: renameWrongNames
  *************************************************************************/
+// jpgFlush will remain due to some files may not be renamed
 const regexForCheckNames = /\d{4}-\d{2}-\d{2}\s\d{2}\.\d{2}\.\d{2}(-\d)?(\s)?(-)?(\s)?(.+)?\.jpg/;
 
 const checkNames = () =>
@@ -178,6 +217,7 @@ const checkNames = () =>
     .src(dir_cuTempFlushJPGs + "**/*")
     .pipe(filterWrongFileNames(regexForCheckNames))
     .pipe(deleteSrcFiles())
+    .pipe(debug({ title: " - " }))
     .pipe(gulp.dest(dir_cuTempGoodJPGs));
 
 const msg_tryToRename = "Try to rename files in jpgFlush dir after exif date!";
@@ -185,7 +225,6 @@ const msg_tryToRename = "Try to rename files in jpgFlush dir after exif date!";
 const tryToRenameWrongAfterExifDate = () =>
   gulp
     .src(dir_cuTempFlushJPGs + "**/*")
-    .pipe(logFile())
     .pipe(logMsg(msg_tryToRename, { task: "warn" }))
     .pipe(renameAfterExifDate())
     .pipe(gulp.dest(dir_cuTempJPGRenamed));
@@ -203,9 +242,17 @@ const flushAllToGood = () => {
     .pipe(logMsg(msg_warnRemainFiles, { task: "warn", color: "reset" }))
     .pipe(prompt.confirm({ message: msg_continue, default: true }))
     .pipe(logMsg(msg_moveAllToGood, { color: "reset" }))
-    .pipe(logFile())
+    .pipe(debug({ title: " - " }))
     .pipe(gulp.dest(dir_cuTempGoodJPGs));
 };
+
+gulp.task(
+  "LogDoneRenameWrongNames",
+  logTask("Renamed wrong names by exif date.", {
+    task: "done",
+    color: "green"
+  })
+);
 
 gulp.task("checkNames", checkNames);
 gulp.task("tryToRenameWrongAfterExifDate", tryToRenameWrongAfterExifDate);
@@ -217,8 +264,8 @@ gulp.task(
     "checkNames",
     "tryToRenameWrongAfterExifDate",
     "flushAllToGood",
-    "cleanupJpgRenamed"
-    // jpgFlush will remain due to some files may not be renamed
+    "cleanupJpgRenamed",
+    "LogDoneRenameWrongNames"
   )
 );
 
@@ -228,29 +275,37 @@ gulp.task(
 const normalizeJPGNames = () => {
   return gulp
     .src(dir_cuTempGoodJPGs + "**/*")
-    .pipe(logFile())
     .pipe(normalizePhotoNames())
+    .pipe(countFiles(msg_countFiles))
     .pipe(gulp.dest(dir_cuTempNormalizedNames));
 };
+
+gulp.task(
+  "LogDoneNormalizeNames",
+  logTask("Normalized photo names.", {
+    task: "done",
+    color: "green"
+  })
+);
 
 gulp.task("normalizeJPGNames", normalizeJPGNames);
 gulp.task("cleanupGoodJPGs", () => cleanUpDir(dir_cuTempGoodJPGs));
 
 gulp.task(
   "normalizeNames",
-  gulp.series("normalizeJPGNames", "cleanupGoodJPGs")
+  gulp.series("normalizeJPGNames", "cleanupGoodJPGs", "LogDoneNormalizeNames")
 );
 
 /*************************************************************************
  *  TASK: moveToCuSort
  *************************************************************************/
-const msg_moveFotoCuSort = "Moved fotos to cuSort";
-const msg_moveVidCuSort = "Moved videos to cuSort";
+const msg_moveFotoCuSort = "      - Moved fotos to cuSort";
+const msg_moveVidCuSort = "      - Moved videos to cuSort";
 
 const movePhotosToCuSort = () => {
   return gulp
     .src(dir_cuTempNormalizedNames + "**/*")
-    .pipe(logFile())
+    .pipe(logFile(msg_forLogFile))
     .pipe(countFiles(msg_moveFotoCuSort))
     .pipe(gulp.dest(dir_cuSort));
 };
@@ -258,9 +313,17 @@ const movePhotosToCuSort = () => {
 const moveMP4sToCuSort = () =>
   gulp
     .src(dir_cuTempMP4s + "**/*")
-    .pipe(logFile())
+    .pipe(logFile(msg_forLogFile))
     .pipe(countFiles(msg_moveVidCuSort))
     .pipe(gulp.dest(dir_cuSort));
+
+gulp.task(
+  "LogDoneMoveCuSort",
+  logTask("Moved all photos to cuSort dir.", {
+    task: "done",
+    color: "green"
+  })
+);
 
 gulp.task("movePhotosToCuSort", movePhotosToCuSort);
 gulp.task("moveMP4sToCuSort", moveMP4sToCuSort);
@@ -273,13 +336,21 @@ gulp.task(
   gulp.series(
     "movePhotosToCuSort",
     "moveMP4sToCuSort",
-    gulp.parallel("cleanupNormalizedNames", "cleanupMp4s")
+    gulp.parallel("cleanupNormalizedNames", "cleanupMp4s"),
+    "LogDoneMoveCuSort"
   )
 );
 
 /*************************************************************************
  *  DEFAULT
  *************************************************************************/
+gulp.task(
+  "LogDoneCleanup",
+  logTask("Clean up cuTemp dir.", {
+    task: "done",
+    color: "green"
+  })
+);
 
 gulp.task("confirmRun", confirmTask("Do you want to run this task?"));
 gulp.task("confirmCleanUp", confirmTask("Do you want to clean up cuTemp dir?"));
@@ -291,13 +362,14 @@ gulp.task(
   gulp.series(
     "displayBanner",
     "confirmRun",
-    "makeCuCopy",
+    "cuCopy",
     "firstSort",
     "renameExtensions",
     "renameWrongNames",
     "normalizeNames",
     "moveToCuSort",
     "confirmCleanUp",
-    "cleanup"
+    "cleanup",
+    "LogDoneCleanup"
   )
 );

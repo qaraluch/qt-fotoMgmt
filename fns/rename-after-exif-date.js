@@ -27,10 +27,10 @@ const renameFiles = () => {
       .replace(/(\d{2}):(\d{2}):(\d{2})/, "$1.$2.$3")
       .concat("-0"); // my photo version placeholder
     // end format: 2017-11-29 12.59.27-0
-    log(`      -  original file name:           ${chalk.yellow(basename)}`);
-    log(`      -  found exif.DateTimeOriginal:  ${exifDate}`);
+    log(`      - original file name:           ${chalk.yellow(basename)}`);
+    log(`      - found exif.DateTimeOriginal:  ${exifDate}`);
     log(
-      `      -  new file name:                ${chalk.green(
+      `      - new file name:                ${chalk.green(
         newBaseName + extension
       )}`
     );
