@@ -1,7 +1,19 @@
-const debug = require("gulp-debug");
-// [sindresorhus/gulp-debug: ](https://github.com/sindresorhus/gulp-debug)
-// npm i gulp-debug -D
+const chalk = require("chalk");
+const path = require("path");
 
-module.exports = function logFile() {
-  return debug({ title: "  - " });
+const log = require("fancy-log");
+// [js-cli/fancy-log: Log things, prefixed with a timestamp](https://github.com/js-cli/fancy-log)
+// npm i fancy-log -S
+
+const through = require("through2");
+// [rvagg/through2](https://github.com/rvagg/through2)
+// npm i through2 -S
+
+module.exports = function logFile(msg = " - ") {
+  let stream = through.obj((file, enc, cb) => {
+    const basename = path.relative(file.base, file.path);
+    log(`${msg}${chalk.blue(basename)}.`);
+    cb(null, file);
+  });
+  return stream;
 };
