@@ -16,6 +16,14 @@ const cleanUpDir = require("./fns/cleanup-dir");
 const timeStamp = require("./fns/time-stamp");
 const banner = require("./fns/banner");
 const confirmTask = require("./fns/confirm-task");
+const logTask = require("./fns/log-task");
+const logFile = require("./fns/log-file");
+const logMsg = require("./fns/log-msg");
+const countFiles = require("./fns/count-files");
+
+const msg_countFiles = "        Total";
+const msg_forLogFile = "      - ";
+const msg_forLogFileZip = "to zip: ";
 
 /********************************
  *  PATHS
@@ -27,11 +35,23 @@ const dir_cuBackup = paths.cuBackup;
 const backupCuFotos = () => {
   return gulp
     .src(dir_cu + "**/*")
+    .pipe(logMsg("Copy files:", { color: "reset" }))
     .pipe(debug({ title: "  - " }))
+    .pipe(logFile(msg_forLogFile))
+    .pipe(countFiles(msg_countFiles))
     .pipe(zip(`cu-temp-arch-${timeStamp()}.zip`))
     .pipe(debug({ title: "  - " }))
+    .pipe(logFile(msg_forLogFileZip))
     .pipe(gulp.dest(dir_cuBackup));
 };
+
+gulp.task(
+  "logDoneBackup",
+  logTask("Made backup of CU photos.", {
+    task: "done",
+    color: "green"
+  })
+);
 
 gulp.task("backupCuFotos", backupCuFotos);
 
@@ -45,10 +65,18 @@ gulp.task("cleanUpBackups", () => cleanUpDir(dir_cuBackup));
 
 gulp.task(
   "default",
-  gulp.series("displayBanner", "confirmRun", "backupCuFotos")
+  gulp.series("displayBanner", "confirmRun", "backupCuFotos", "logDoneBackup")
+);
+
+gulp.task(
+  "logDoneRemoveBackups",
+  logTask("Removed all temp CU photos backups!", {
+    task: "done",
+    color: "green"
+  })
 );
 
 gulp.task(
   "removeBackups",
-  gulp.series("confirmRemoveBackups", "cleanUpBackups")
+  gulp.series("confirmRemoveBackups", "cleanUpBackups", "logDoneRemoveBackups")
 );
