@@ -1,7 +1,7 @@
 {
   "name": "qt-fotomgmt",
-  "homepage": "https://github.com/qaraluch/XXX",
-  "version": "0.1.0",
+  "homepage": "https://github.com/qaraluch/qt-fotoMgmt",
+  "version": "0.2.0",
   "description": "gulp tasks package for my foto managment",
   "license": "MIT",
   "author": {
@@ -11,20 +11,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/qaraluch/XXX.git"
+    "url": "https://github.com/qaraluch/qt-fotoMgmt.git"
   },
   "files": [],
   "main": "",
   "module": "",
   "scripts": {
-    "build": "babel src --out-dir=dist",
-    "test": "ava --verbose",
-    "start": "npm run build && node dist/index.js",
-    "start:raw": "node src/index.js",
-    "start:test": "npm run build -s && npm run test -s $1",
-    "prepublishOnly": "npm run build",
-    "watch": "nodemon --watch src --watch test -x \"npm run start:test -s\"",
-    "clear": "rimraf dist/*",
     "clear:all": "rimraf node_modules"
   },
   "babel": {
