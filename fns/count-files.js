@@ -8,7 +8,7 @@ const through = require("through2");
 // [rvagg/through2](https://github.com/rvagg/through2)
 // npm i through2 -S
 
-module.exports = function countFiles(msg = " - ") {
+module.exports = function countFiles(msg = " - ", testerCb) {
   let count = 0;
   let stream = through.obj(
     (file, enc, cb) => {
@@ -17,6 +17,7 @@ module.exports = function countFiles(msg = " - ") {
     },
     cb => {
       log(`${msg}: ${chalk.magenta(count)} file(s).`);
+      testerCb && testerCb(count);
       cb();
     }
   );

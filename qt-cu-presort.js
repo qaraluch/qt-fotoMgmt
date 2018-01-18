@@ -27,6 +27,31 @@ const normalizePhotoNames = require("./fns/normalize-photo-names");
 const confirmTask = require("./fns/confirm-task");
 const bumpFotoVersion = require("./fns/bump-foto-version");
 const countFiles = require("./fns/count-files");
+const tester = require("./fns/tester");
+const testerReport = require("./fns/tester-report-presort");
+
+/********************************
+ *  TESTER
+ ********************************/
+const presortTester = tester();
+
+const spawnTesterCb = propertyName => count =>
+  presortTester.add(propertyName, count);
+
+gulp.task("testing", () => {
+  presortTester.show(testerReport);
+  return Promise.resolve();
+});
+
+gulp.task(
+  "logDoneTesting",
+  logTask("Tested results of the task!", {
+    task: "done",
+    color: "green"
+  })
+);
+
+gulp.task("testIt", gulp.series("testing", "logDoneTesting"));
 
 /********************************
  *  PATHS
@@ -67,11 +92,11 @@ const makeCuCopy = () =>
     .src(dir_cu + "**/*")
     .pipe(deleteSrcFiles())
     .pipe(logFile(msg_forLogFile))
-    .pipe(countFiles(msg_countFiles))
+    .pipe(countFiles(msg_countFiles, spawnTesterCb("cu")))
     .pipe(gulp.dest(dir_cuTempCopyCu));
 
 gulp.task(
-  "LogDoneCuCopy",
+  "logDoneCuCopy",
   logTask("Moved photos to cuCopy dir.", {
     task: "done",
     color: "green"
@@ -79,7 +104,7 @@ gulp.task(
 );
 
 gulp.task("makeCuCopy", makeCuCopy);
-gulp.task("cuCopy", gulp.series("makeCuCopy", "LogDoneCuCopy"));
+gulp.task("cuCopy", gulp.series("makeCuCopy", "logDoneCuCopy"));
 
 /*************************************************************************
  *  TASK: firstSort
@@ -135,10 +160,10 @@ const seeWhatLeft = () =>
     .src(dir_cuTempCopyCu + "**/*")
     .pipe(logMsg(msg_leftInCu, { task: "warn", color: "yellow" }))
     .pipe(logFile(msg_forLogFile))
-    .pipe(countFiles(msg_left));
+    .pipe(countFiles(msg_left, spawnTesterCb("left")));
 
 gulp.task(
-  "LogDoneFirstSort",
+  "logDoneFirstSort",
   logTask("Sort photos by extensions.", {
     task: "done",
     color: "green"
@@ -158,7 +183,7 @@ gulp.task(
     "copyBIGJPGs",
     "copyMP4s",
     "seeWhatLeft",
-    "LogDoneFirstSort"
+    "logDoneFirstSort"
   )
 );
 
@@ -184,7 +209,7 @@ const moveJPGs = () =>
   gulp.src(dir_cuTempJPGs + "**/*").pipe(gulp.dest(dir_cuTempFlushJPGs));
 
 gulp.task(
-  "LogDoneExtRename",
+  "logDoneExtRename",
   logTask("Renamed photos by their extensions.", {
     task: "done",
     color: "green"
@@ -202,7 +227,7 @@ gulp.task(
   gulp.series(
     gulp.parallel("renameBIGJPGs", "renameJPEGs", "moveJPGs"),
     gulp.parallel("cleanupBIGJPGs", "cleanupJPEGs", "cleanupJPGs"),
-    "LogDoneExtRename"
+    "logDoneExtRename"
   )
 );
 
@@ -247,7 +272,7 @@ const flushAllToGood = () => {
 };
 
 gulp.task(
-  "LogDoneRenameWrongNames",
+  "logDoneRenameWrongNames",
   logTask("Renamed wrong names by exif date.", {
     task: "done",
     color: "green"
@@ -265,7 +290,7 @@ gulp.task(
     "tryToRenameWrongAfterExifDate",
     "flushAllToGood",
     "cleanupJpgRenamed",
-    "LogDoneRenameWrongNames"
+    "logDoneRenameWrongNames"
   )
 );
 
@@ -281,7 +306,7 @@ const normalizeJPGNames = () => {
 };
 
 gulp.task(
-  "LogDoneNormalizeNames",
+  "logDoneNormalizeNames",
   logTask("Normalized photo names.", {
     task: "done",
     color: "green"
@@ -293,7 +318,7 @@ gulp.task("cleanupGoodJPGs", () => cleanUpDir(dir_cuTempGoodJPGs));
 
 gulp.task(
   "normalizeNames",
-  gulp.series("normalizeJPGNames", "cleanupGoodJPGs", "LogDoneNormalizeNames")
+  gulp.series("normalizeJPGNames", "cleanupGoodJPGs", "logDoneNormalizeNames")
 );
 
 /*************************************************************************
@@ -306,7 +331,7 @@ const movePhotosToCuSort = () => {
   return gulp
     .src(dir_cuTempNormalizedNames + "**/*")
     .pipe(logFile(msg_forLogFile))
-    .pipe(countFiles(msg_moveFotoCuSort))
+    .pipe(countFiles(msg_moveFotoCuSort, spawnTesterCb("jpgs")))
     .pipe(gulp.dest(dir_cuSort));
 };
 
@@ -314,11 +339,11 @@ const moveMP4sToCuSort = () =>
   gulp
     .src(dir_cuTempMP4s + "**/*")
     .pipe(logFile(msg_forLogFile))
-    .pipe(countFiles(msg_moveVidCuSort))
+    .pipe(countFiles(msg_moveVidCuSort, spawnTesterCb("mp4s")))
     .pipe(gulp.dest(dir_cuSort));
 
 gulp.task(
-  "LogDoneMoveCuSort",
+  "logDoneMoveCuSort",
   logTask("Moved all photos to cuSort dir.", {
     task: "done",
     color: "green"
@@ -337,7 +362,7 @@ gulp.task(
     "movePhotosToCuSort",
     "moveMP4sToCuSort",
     gulp.parallel("cleanupNormalizedNames", "cleanupMp4s"),
-    "LogDoneMoveCuSort"
+    "logDoneMoveCuSort"
   )
 );
 
@@ -345,7 +370,7 @@ gulp.task(
  *  DEFAULT
  *************************************************************************/
 gulp.task(
-  "LogDoneCleanup",
+  "logDoneCleanup",
   logTask("Clean up cuTemp dir.", {
     task: "done",
     color: "green"
@@ -370,6 +395,7 @@ gulp.task(
     "moveToCuSort",
     "confirmCleanUp",
     "cleanup",
-    "LogDoneCleanup"
+    "logDoneCleanup",
+    "testIt"
   )
 );
