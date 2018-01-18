@@ -1,20 +1,32 @@
-![logo-qm](./pic/logo-qm.jpg)
+![logo-qm](./pic/git-logo-qt-gulp.jpg)
 
-# XXX [![npm version](https://badge.fury.io/js/XXX.svg)](https://badge.fury.io/js/XXX) [![Build Status](https://travis-ci.org/qaraluch/XXX.svg?branch=master)](https://travis-ci.org/qaraluch/XXX) [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
+# qt-fotoMgmt [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 
-> Module for...
+> Node.js script for automating and managing photos build on top of [gulpjs](https://github.com/gulpjs/gulp).
+
+![preview](./pic/qt-fotomgmt.gif)
 
 ## Installation
 
 ```sh
-$ npm i -S XXX
+$ git clone https://github.com/qaraluch/qt-fotoMgmt.git qt-fotoMgmt
 ```
+
+## Configuration
+Set up paths in `paths.json` file for input and output directory configuration. Script uses `QT_FOTOMGMT` enviroment variable with `prod` value to use above mentioned path file. Otherwise, it uses `paths-dev.json` for development process. Use `paths-reference.json` file as reference. 
 
 ## Usage
-
+To run specific task type in console:
 ```sh
-
+gulp -f <gulpFile> <task> --silent
 ```
+
+List of gulp files with their tasks:
+* `qt-cu-backup` - run it for temporary backup photos for time of manipulate photos (default task). 
+
+* `qt-cu-backup removeBackups` - deletes temporary backup files.
+
+* `qt-cu-presort` - preliminary renaming photos
 
 ## License
 
