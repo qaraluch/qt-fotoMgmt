@@ -394,8 +394,8 @@ gulp.task(
     "normalizeNames",
     "moveToCuSort",
     "confirmCleanUp",
+    "testIt",
     "cleanup",
-    "logDoneCleanup",
-    "testIt"
+    "logDoneCleanup"
   )
 );
