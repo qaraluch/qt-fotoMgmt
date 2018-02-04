@@ -65,6 +65,7 @@ const dir_cuTempJPGs = paths.cuTemp + "jpgs/";
 const dir_cuTempJPEGs = paths.cuTemp + "jpegs/";
 const dir_cuTempBigJPGs = paths.cuTemp + "bigJPGs/";
 const dir_cuTempMP4s = paths.cuTemp + "mp4s/";
+const dir_cuTempGIFs = paths.cuTemp + "gifs/";
 
 // TASK: renameExtensions
 const dir_cuTempFlushJPGs = paths.cuTemp + "flushJPGs/";
@@ -113,6 +114,7 @@ const msg_jpgs = "        Total jpgs";
 const msg_jpegs = "        Total jpegs";
 const msg_bigJPGs = "        Total JPGs";
 const msg_mp4s = "        Total mp4s";
+const msg_gifs = "        Total gifs";
 const msg_left = "        Total";
 
 const copyJPGs = () => {
@@ -152,6 +154,15 @@ const copyMP4s = () =>
     .pipe(countFiles(msg_mp4s))
     .pipe(gulp.dest(dir_cuTempMP4s));
 
+const copyGIFs = () =>
+  gulp
+    .src(dir_cuTempCopyCu + "**/*")
+    .pipe(filterByExt(".gif"))
+    .pipe(debug({ title: " - " }))
+    .pipe(deleteSrcFiles())
+    .pipe(countFiles(msg_gifs))
+    .pipe(gulp.dest(dir_cuTempGIFs));
+
 const msg_leftInCu =
   "Some files left in cuCopy dir (some edgecases is not supported!?)";
 
@@ -174,6 +185,7 @@ gulp.task("copyJPGs", copyJPGs);
 gulp.task("copyJEPGs", copyJEPGs);
 gulp.task("copyBIGJPGs", copyBIGJPGs);
 gulp.task("copyMP4s", copyMP4s);
+gulp.task("copyGIFs", copyGIFs);
 gulp.task("seeWhatLeft", seeWhatLeft);
 gulp.task(
   "firstSort",
@@ -182,6 +194,7 @@ gulp.task(
     "copyJEPGs",
     "copyBIGJPGs",
     "copyMP4s",
+    "copyGIFs",
     "seeWhatLeft",
     "logDoneFirstSort"
   )
@@ -326,6 +339,7 @@ gulp.task(
  *************************************************************************/
 const msg_moveFotoCuSort = "      - Moved fotos to cuSort";
 const msg_moveVidCuSort = "      - Moved videos to cuSort";
+const msg_moveGifCuSort = "      - Moved gifs to cuSort";
 
 const movePhotosToCuSort = () => {
   return gulp
@@ -342,6 +356,13 @@ const moveMP4sToCuSort = () =>
     .pipe(countFiles(msg_moveVidCuSort, spawnTesterCb("mp4s")))
     .pipe(gulp.dest(dir_cuSort));
 
+const moveGIFsToCuSort = () =>
+  gulp
+    .src(dir_cuTempGIFs + "**/*")
+    .pipe(logFile(msg_forLogFile))
+    .pipe(countFiles(msg_moveGifCuSort, spawnTesterCb("gifs")))
+    .pipe(gulp.dest(dir_cuSort));
+
 gulp.task(
   "logDoneMoveCuSort",
   logTask("Moved all photos to cuSort dir.", {
@@ -352,16 +373,19 @@ gulp.task(
 
 gulp.task("movePhotosToCuSort", movePhotosToCuSort);
 gulp.task("moveMP4sToCuSort", moveMP4sToCuSort);
+gulp.task("moveGIFsToCuSort", moveGIFsToCuSort);
 gulp.task("cleanupNormalizedNames", () =>
   cleanUpDir(dir_cuTempNormalizedNames)
 );
 gulp.task("cleanupMp4s", () => cleanUpDir(dir_cuTempMP4s));
+gulp.task("cleanupGIFs", () => cleanUpDir(dir_cuTempGIFs));
 gulp.task(
   "moveToCuSort",
   gulp.series(
     "movePhotosToCuSort",
     "moveMP4sToCuSort",
-    gulp.parallel("cleanupNormalizedNames", "cleanupMp4s"),
+    "moveGIFsToCuSort",
+    gulp.parallel("cleanupNormalizedNames", "cleanupMp4s", "cleanupGIFs"),
     "logDoneMoveCuSort"
   )
 );
@@ -393,8 +417,8 @@ gulp.task(
     "renameWrongNames",
     "normalizeNames",
     "moveToCuSort",
-    "confirmCleanUp",
     "testIt",
+    "confirmCleanUp",
     "cleanup",
     "logDoneCleanup"
   )

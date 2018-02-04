@@ -9,7 +9,6 @@ const show = function show(cb) {
 module.exports = function tester(options = {}) {
   const defaultOptions = {};
   const endOptions = Object.assign({}, defaultOptions, options);
-  // const { XXX } = endOptions;
 
   const composedStateObj = Object.assign(
     Object.assign({}),
