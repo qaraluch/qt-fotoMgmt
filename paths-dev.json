@@ -6,5 +6,7 @@
   // Temp Dir for processing files
   "cuTemp": ".fotos/cuTemp/",
   // Detination Dir for cu-presort
-  "cuSort": ".fotos/cuSort/"
+  "cuSort": ".fotos/cuSort/",
+  // Detination Dir for cu-sort2 for dir renaming
+  "cuSort2": ".fotos/cuSort2/"
 }
