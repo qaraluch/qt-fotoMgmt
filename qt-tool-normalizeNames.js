@@ -69,6 +69,7 @@ const regexForCheckNames = /\d{4}-\d{2}-\d{2}\s\d{2}\.\d{2}\.\d{2}(-\d)?(\s)?(-)
 const normalizeJPGNames = () => {
   return gulp
     .src(dir_fotos + "**/*")
+    .pipe(debug({ title: " - " }))
     .pipe(countFiles(msg_countFilesBefore))
     .pipe(filterWrongFileNames(regexForCheckNames))
     .pipe(deleteSrcFiles())
