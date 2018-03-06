@@ -1,5 +1,7 @@
 /* eslint-disable no-console */
 
+const path = require("path");
+const meow = require("meow");
 const gulp = require("gulp");
 
 const prompt = require("gulp-prompt");
@@ -13,9 +15,6 @@ const debug = require("gulp-debug");
 const zip = require("gulp-zip");
 // [sindresorhus/gulp-zip: ZIP compress files](https://github.com/sindresorhus/gulp-zip)
 // npm i gulp-zip -S
-
-
-const path = require("path");
 
 // FNS:
 // const paths = require("./fns/load-paths.js")("./paths.json", "QT_FOTOMGMT");
@@ -62,41 +61,36 @@ const timeStamp = require("./fns/time-stamp");
 // gulp.task("testIt", gulp.series("testing", "logDoneTesting"));
 
 /********************************
+ *  ADDITIONAL CLI ARGS
+ ********************************/
+const options = {
+  flags: {
+    path: {
+      type: "string",
+      alias: "p",
+      default: process.cwd(),
+    },
+  }
+};
+
+const args = meow(" ", options);
+const { path: customPath } = args.flags;
+
+/********************************
  *  PATHS
  ********************************/
-// TASK: firstSort
-// const dir_cu = paths.cu;
+const cwd = process.cwd();
+const dir_fotos = path.normalize(path.resolve(cwd, customPath) + "/");
+console.log("dir_fotos ", dir_fotos);
 
-// const dir_cuTempCopyCu = paths.cuTemp + "cuCopy/";
-// const dir_cuTempJPGs = paths.cuTemp + "jpgs/";
-// const dir_cuTempJPEGs = paths.cuTemp + "jpegs/";
-// const dir_cuTempBigJPGs = paths.cuTemp + "bigJPGs/";
-// const dir_cuTempMP4s = paths.cuTemp + "mp4s/";
-// const dir_cuTempGIFs = paths.cuTemp + "gifs/";
+// const dir_backup = `${dir_fotos}.backups/`;
 
-// // TASK: renameExtensions
-// const dir_cuTempFlushJPGs = paths.cuTemp + "flushJPGs/";
-
-// // TASK: renameWrongNames
-// const dir_cuTempGoodJPGs = paths.cuTemp + "goodJPGs/";
-// const dir_cuTempJPGRenamed = paths.cuTemp + "jpgRenamed/";
-
-// // TASK: normalizeNames
-// const dir_cuTempNormalizedNames = paths.cuTemp + "normalizedNames/";
-
-// // TASK: moveToCuSort
-// const dir_cuSort = paths.cuSort;
-
-// const dir_cuTemp = paths.cuTemp;
-
-const dir_fotos = "./.fotos/cuSort2/praca - sth/";
-const dir_backup = `${dir_fotos}.backups/`;
-
-//TASK: ???
+/********************************
+ *  TASK
+ ********************************/
 const msg_forLogFile = "      - ";
 const msg_countFiles = "        Total";
 
-const cwd = process.cwd();
 
 const testTask = () => {
   return gulp
