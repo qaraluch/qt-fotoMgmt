@@ -27,7 +27,8 @@ List of gulp files with their tasks:
 * `qt-cu-backup removeBackups` - deletes temporary backup files.
 
 * `qt-cu-presort` - preliminary renaming photos
-* `qt-cusort-renameAfterDirName` - rename photo files after its parent name
+* `qt-tool-normalizeName` - normalize photos date in the name in the cwd.
+                            Normalize form cwd. Rename in place. 
 
 ## License
 
