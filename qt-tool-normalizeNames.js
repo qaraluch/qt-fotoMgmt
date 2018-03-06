@@ -38,29 +38,6 @@ const testerReport = require("./fns/tester-report-presort");
 const timeStamp = require("./fns/time-stamp");
 
 /********************************
- *  TESTER
- ********************************/
-// const presortTester = tester();
-
-// const spawnTesterCb = propertyName => count =>
-//   presortTester.add(propertyName, count);
-
-// gulp.task("testing", () => {
-//   presortTester.show(testerReport);
-//   return Promise.resolve();
-// });
-
-// gulp.task(
-//   "logDoneTesting",
-//   logTask("Tested results of the task!", {
-//     task: "done",
-//     color: "green"
-//   })
-// );
-
-// gulp.task("testIt", gulp.series("testing", "logDoneTesting"));
-
-/********************************
  *  ADDITIONAL CLI ARGS
  ********************************/
 const options = {
@@ -81,63 +58,39 @@ const { path: customPath } = args.flags;
  ********************************/
 const cwd = process.cwd();
 const dir_fotos = path.normalize(path.resolve(cwd, customPath) + "/");
-console.log("dir_fotos ", dir_fotos);
 
-// const dir_backup = `${dir_fotos}.backups/`;
+/*************************************************************************
+ *  TASK: normalizeNames
+ *************************************************************************/
+const msg_countFilesBefore = "        Total";
+const msg_countFilesToRename = "         - to rename";
+const regexForCheckNames = /\d{4}-\d{2}-\d{2}\s\d{2}\.\d{2}\.\d{2}(-\d)?(\s)?(-)?(\s)?(.+)?/;
 
-/********************************
- *  TASK
- ********************************/
-const msg_forLogFile = "      - ";
-const msg_countFiles = "        Total";
-
-
-const testTask = () => {
+const normalizeJPGNames = () => {
   return gulp
     .src(dir_fotos + "**/*")
-    .pipe(logMsg("Copy files:", { color: "reset" }))
-    .pipe(debug({ title: "  - " }))
-    .pipe(logFile(msg_forLogFile))
-    .pipe(countFiles(msg_countFiles));
-
+    .pipe(countFiles(msg_countFilesBefore))
+    .pipe(filterWrongFileNames(regexForCheckNames))
+    .pipe(deleteSrcFiles())
+    .pipe(countFiles(msg_countFilesToRename))
+    .pipe(normalizePhotoNames())
+    .pipe(gulp.dest(dir_fotos));
 };
 
 gulp.task(
-  "logDoneBackup",
-  logTask("Made ....", {
+  "logDoneNormalizeNames",
+  logTask(`Normalized photo names in: '${dir_fotos}' dir.`, {
     task: "done",
     color: "green"
   })
 );
 
-gulp.task("testTask", testTask);
+gulp.task("normalizeJPGNames", normalizeJPGNames);
 
-/*************************************************************************
- *  TASK: normalizeNames
- *************************************************************************/
-// const normalizeJPGNames = () => {
-//   return gulp
-//     .src(dir_cuTempGoodJPGs + "**/*")
-//     .pipe(normalizePhotoNames())
-//     .pipe(countFiles(msg_countFiles))
-//     .pipe(gulp.dest(dir_cuTempNormalizedNames));
-// };
-
-// gulp.task(
-//   "logDoneNormalizeNames",
-//   logTask("Normalized photo names.", {
-//     task: "done",
-//     color: "green"
-//   })
-// );
-
-// gulp.task("normalizeJPGNames", normalizeJPGNames);
-// gulp.task("cleanupGoodJPGs", () => cleanUpDir(dir_cuTempGoodJPGs));
-
-// gulp.task(
-//   "normalizeNames",
-//   gulp.series("normalizeJPGNames", "cleanupGoodJPGs", "logDoneNormalizeNames")
-// );
+gulp.task(
+  "normalizeNames",
+  gulp.series("normalizeJPGNames", "logDoneNormalizeNames")
+);
 
 /*************************************************************************
  *  DEFAULT
@@ -150,16 +103,6 @@ gulp.task(
   gulp.series(
     "displayBanner",
     "confirmRun",
-    "testTask"
-    // "cuCopy",
-    // "firstSort",
-    // "renameExtensions",
-    // "renameWrongNames",
-    // "normalizeNames",
-    // "moveToCuSort",
-    // "testIt",
-    // "confirmCleanUp",
-    // "cleanup",
-    // "logDoneCleanup"
+    "normalizeNames"
   )
 );
