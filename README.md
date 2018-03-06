@@ -27,6 +27,10 @@ List of gulp files with their tasks:
 * `qt-cu-backup removeBackups` - deletes temporary backup files.
 
 * `qt-cu-presort` - preliminary renaming photos
+* `qt-tool-normalizeName` - normalize photos date in the name in the cwd.
+                            Normalize form cwd. Rename in place. No dependant on 
+                            enviroment variable: `QT_FOTOMGMT`.
+                            --path <customPath> - pass in different path to working dir
 
 ## License
 
