@@ -48,7 +48,6 @@ const normalizeJPGNames = () => {
   return gulp
     .src(dir_fotos + "**/*")
     .pipe(filterDirs())
-    .pipe(debug({ title: " - " }))
     .pipe(countFiles(msg_countFilesBefore))
     .pipe(filterWrongFileNames(regexForCheckNames))
     .pipe(deleteSrcFiles())
