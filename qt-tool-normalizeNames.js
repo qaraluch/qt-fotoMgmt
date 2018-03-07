@@ -16,6 +16,7 @@ const filterWrongFileNames = require("./fns/filter-wrong-filenames");
 const normalizePhotoNames = require("./fns/normalize-photo-names");
 const confirmTask = require("./fns/confirm-task");
 const countFiles = require("./fns/count-files");
+const filterDirs = require("./fns/filter-dirs");
 
 /********************************
  *  ADDITIONAL CLI ARGS
@@ -25,8 +26,8 @@ const options = {
     path: {
       type: "string",
       alias: "p",
-      default: process.cwd(),
-    },
+      default: process.cwd()
+    }
   }
 };
 
@@ -46,6 +47,7 @@ const regexForCheckNames = /\d{4}-\d{2}-\d{2}\s\d{2}\.\d{2}\.\d{2}(-\d)?(\s)?(-)
 const normalizeJPGNames = () => {
   return gulp
     .src(dir_fotos + "**/*")
+    .pipe(filterDirs())
     .pipe(debug({ title: " - " }))
     .pipe(countFiles(msg_countFilesBefore))
     .pipe(filterWrongFileNames(regexForCheckNames))
@@ -78,9 +80,5 @@ gulp.task("confirmRun", confirmTask("Do you want to run this task?"));
 
 gulp.task(
   "default",
-  gulp.series(
-    "displayBanner",
-    "confirmRun",
-    "normalizeNames"
-  )
+  gulp.series("displayBanner", "confirmRun", "normalizeNames")
 );
