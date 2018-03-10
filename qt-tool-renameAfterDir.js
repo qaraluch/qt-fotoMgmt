@@ -68,7 +68,7 @@ gulp.task("renameAfterDir", gulp.series("renameFn", "logDoneRename"));
 /*************************************************************************
  *  DEFAULT
  *************************************************************************/
-gulp.task("displayBanner", () => banner("Normalize Names", "ANSI Shadow"));
+gulp.task("displayBanner", () => banner("Rename After Dir", "ANSI Shadow"));
 gulp.task("confirmRun", confirmTask("Do you want to run this task?"));
 
 gulp.task(
