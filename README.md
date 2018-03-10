@@ -34,9 +34,20 @@ List of gulp files with their tasks:
 * `qt-tool-normalizeName` - normalize photos date in the name in the cwd.
   Normalize form cwd. Rename in place. No dependant on
   enviroment variable: `QT_FOTOMGMT`.
+
   --path <customPath> - pass in different path to working dir
+
   Example:
   `gulp -f qt-tool-normalizeNames.js --silent --path <pathToWorkingDir>`
+
+* `qt-tool-renameAfterDir` - add paretn dir name to the name of the foto.
+  Normalize form cwd. Rename in place. No dependant on
+  enviroment variable: `QT_FOTOMGMT`.
+
+  --path <customPath> - pass in different path to working dir
+
+  Example:
+  `gulp -f qt-tool-renameAfterDir.js --silent --path <pathToWorkingDir>`
 
 ## License
 
