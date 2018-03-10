@@ -42,7 +42,7 @@ module.exports = function normalizePhotoNames(options) {
         .replace(/^/, " - ");
     let newComment = commentClean || "";
     let newBaseName = `${date}${newVersion}${newComment}${extension}`;
-    newFile.path = `${file.base}/${newBaseName}`;
+    newFile.path = `${file.dirname}/${newBaseName}`; //not file.base!
     log(`      - normalized name: ${chalk.green(newBaseName)}`);
     cb(null, file);
   });
