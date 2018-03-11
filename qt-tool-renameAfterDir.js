@@ -35,7 +35,6 @@ const { path: customPath } = args.flags;
  *************************************************************************/
 const cwd = process.cwd();
 const dir_fotos = path.normalize(path.resolve(cwd, customPath) + "/");
-console.log("dir_fotos ", dir_fotos);
 
 const msg_countFilesBefore = "        Total";
 const msg_countFilesToRename = "         - to rename";
