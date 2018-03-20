@@ -33,16 +33,18 @@ const dir_cuBackup = paths.cuBackup;
 
 //TASKS:
 const backupCuFotos = () => {
-  return gulp
-    .src(dir_cu + "**/*")
-    .pipe(logMsg("Copy files:", { color: "reset" }))
-    .pipe(debug({ title: "  - " }))
-    .pipe(logFile(msg_forLogFile))
-    .pipe(countFiles(msg_countFiles))
-    .pipe(zip(`cu-temp-arch-${timeStamp()}.zip`))
-    .pipe(debug({ title: "  - " }))
-    .pipe(logFile(msg_forLogFileZip))
-    .pipe(gulp.dest(dir_cuBackup));
+  return (
+    gulp
+      .src(dir_cu + "**/*")
+      .pipe(logMsg("Copy files:", { color: "reset" }))
+      // .pipe(debug({ title: "  - " }))
+      .pipe(logFile(msg_forLogFile))
+      .pipe(countFiles(msg_countFiles))
+      .pipe(zip(`cu-temp-arch-${timeStamp()}.zip`))
+      // .pipe(debug({ title: "  - " }))
+      .pipe(logFile(msg_forLogFileZip))
+      .pipe(gulp.dest(dir_cuBackup))
+  );
 };
 
 gulp.task(
