@@ -372,7 +372,7 @@ const movePhotosToCuSort = () => {
   return gulp
     .src(dir_cuTempNormalizedNames + "**/*")
     .pipe(logFile(msg_forLogFile))
-    .pipe(countFiles(msg_moveFotoCuSort, spawnTesterCb("jpgs")))
+    .pipe(countFiles(msg_moveFotoCuSort, spawnTesterCb("photos")))
     .pipe(gulp.dest(dir_cuSort));
 };
 
