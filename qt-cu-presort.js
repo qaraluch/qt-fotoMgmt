@@ -66,6 +66,7 @@ const dir_cuTempJPEGs = paths.cuTemp + "jpegs/";
 const dir_cuTempBigJPGs = paths.cuTemp + "bigJPGs/";
 const dir_cuTempMP4s = paths.cuTemp + "mp4s/";
 const dir_cuTempGIFs = paths.cuTemp + "gifs/";
+const dir_cuTempPNGs = paths.cuTemp + "pngs/";
 
 // TASK: renameExtensions
 const dir_cuTempFlushJPGs = paths.cuTemp + "flushJPGs/";
@@ -115,6 +116,7 @@ const msg_jpegs = "        Total jpegs";
 const msg_bigJPGs = "        Total JPGs";
 const msg_mp4s = "        Total mp4s";
 const msg_gifs = "        Total gifs";
+const msg_PNGs = "        Total PNGs";
 const msg_left = "        Total";
 
 const copyJPGs = () => {
@@ -163,6 +165,15 @@ const copyGIFs = () =>
     .pipe(countFiles(msg_gifs))
     .pipe(gulp.dest(dir_cuTempGIFs));
 
+const copyPNGs = () => {
+  return gulp
+    .src(dir_cuTempCopyCu + "**/*")
+    .pipe(filterByExt(".png"))
+    .pipe(debug({ title: " - " }))
+    .pipe(deleteSrcFiles())
+    .pipe(countFiles(msg_PNGs))
+    .pipe(gulp.dest(dir_cuTempPNGs));
+};
 const msg_leftInCu =
   "Some files left in cuCopy dir (some edgecases is not supported!?)";
 
@@ -181,6 +192,7 @@ gulp.task(
   })
 );
 
+gulp.task("copyPNGs", copyPNGs);
 gulp.task("copyJPGs", copyJPGs);
 gulp.task("copyJEPGs", copyJEPGs);
 gulp.task("copyBIGJPGs", copyBIGJPGs);
@@ -191,6 +203,7 @@ gulp.task(
   "firstSort",
   gulp.series(
     "copyJPGs",
+    "copyPNGs",
     "copyJEPGs",
     "copyBIGJPGs",
     "copyMP4s",
@@ -318,6 +331,14 @@ const normalizeJPGNames = () => {
     .pipe(gulp.dest(dir_cuTempNormalizedNames));
 };
 
+const normalizePNGNames = () => {
+  return gulp
+    .src(dir_cuTempPNGs + "**/*")
+    .pipe(normalizePhotoNames())
+    .pipe(countFiles(msg_countFiles))
+    .pipe(gulp.dest(dir_cuTempNormalizedNames));
+};
+
 gulp.task(
   "logDoneNormalizeNames",
   logTask("Normalized photo names.", {
@@ -327,11 +348,17 @@ gulp.task(
 );
 
 gulp.task("normalizeJPGNames", normalizeJPGNames);
+gulp.task("normalizePNGNames", normalizePNGNames);
 gulp.task("cleanupGoodJPGs", () => cleanUpDir(dir_cuTempGoodJPGs));
 
 gulp.task(
   "normalizeNames",
-  gulp.series("normalizeJPGNames", "cleanupGoodJPGs", "logDoneNormalizeNames")
+  gulp.series(
+    "normalizeJPGNames",
+    "normalizePNGNames",
+    "cleanupGoodJPGs",
+    "logDoneNormalizeNames"
+  )
 );
 
 /*************************************************************************
