@@ -23,7 +23,7 @@ function splitFileName(filePath) {
   const basenameNoExt = path.basename(filePath, extension);
   const regResults = regex.exec(basenameNoExt);
   const date = regResults[1];
-  const version = regResults[2];
+  const version = regResults[2] || "-0";
   const comment = regResults[3];
   return { date, version, comment, extension };
 }
