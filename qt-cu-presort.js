@@ -428,8 +428,8 @@ gulp.task(
   })
 );
 
-gulp.task("confirmRun", confirmTask("Do you want to run this task?"));
 gulp.task("pressAnyToContinue", pressAny());
+gulp.task("confirmRun", confirmTask("Do you want to run this task?"));
 gulp.task("confirmCleanUp", confirmTask("Do you want to clean up cuTemp dir?"));
 gulp.task("displayBanner", () => banner("cu-presort", "ANSI Shadow"));
 gulp.task("cleanup", () => cleanUpDir(dir_cuTemp));
@@ -438,14 +438,19 @@ gulp.task(
   "default",
   gulp.series(
     "displayBanner",
-    // "pressAnyToContinue",
     "confirmRun",
     "cuCopy",
+    "pressAnyToContinue",
     "firstSort",
+    "pressAnyToContinue",
     "renameExtensions",
+    "pressAnyToContinue",
     "renameWrongNames",
+    "pressAnyToContinue",
     "normalizeNames",
+    "pressAnyToContinue",
     "moveToCuSort",
+    "pressAnyToContinue",
     "testIt",
     "confirmCleanUp",
     "cleanup",
