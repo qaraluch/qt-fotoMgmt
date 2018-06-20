@@ -24,7 +24,7 @@ const renameExt = require("./fns/rename-ext");
 const filterWrongFileNames = require("./fns/filter-wrong-filenames");
 const renameAfterExifDate = require("./fns/rename-after-exif-date")(); //lazypipe
 const normalizePhotoNames = require("./fns/normalize-photo-names");
-const confirmTask = require("./fns/confirm-task");
+const { confirmTask, pressAny } = require("./fns/confirm-task");
 const bumpFotoVersion = require("./fns/bump-foto-version");
 const countFiles = require("./fns/count-files");
 const tester = require("./fns/tester");
@@ -429,6 +429,7 @@ gulp.task(
 );
 
 gulp.task("confirmRun", confirmTask("Do you want to run this task?"));
+gulp.task("pressAnyToContinue", pressAny());
 gulp.task("confirmCleanUp", confirmTask("Do you want to clean up cuTemp dir?"));
 gulp.task("displayBanner", () => banner("cu-presort", "ANSI Shadow"));
 gulp.task("cleanup", () => cleanUpDir(dir_cuTemp));
@@ -437,6 +438,7 @@ gulp.task(
   "default",
   gulp.series(
     "displayBanner",
+    // "pressAnyToContinue",
     "confirmRun",
     "cuCopy",
     "firstSort",

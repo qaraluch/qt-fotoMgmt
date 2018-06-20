@@ -4,10 +4,7 @@ const prompt = require("gulp-prompt");
 //[Freyskeyd/gulp-prompt: Add interactive console prompts to gulp](https://github.com/Freyskeyd/gulp-prompt)
 // npm i gulp-prompt -S
 
-module.exports = function confirmTask(
-  message = "some mgs?",
-  defaultOpt = true
-) {
+function confirmTask(message = "some mgs?", defaultOpt = true) {
   return () =>
     gulp.src("./package.json").pipe(
       prompt.confirm({
@@ -15,4 +12,21 @@ module.exports = function confirmTask(
         default: defaultOpt
       })
     );
+}
+
+function pressAny(message = "Continue?") {
+  return () =>
+    gulp.src("./package.json").pipe(
+      prompt.prompt({
+        type: "input",
+        name: "pressAny",
+        message,
+        default: "[press Enter]"
+      })
+    );
+}
+
+module.exports = {
+  confirmTask,
+  pressAny
 };
