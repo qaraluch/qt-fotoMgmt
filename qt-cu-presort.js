@@ -350,6 +350,7 @@ gulp.task(
 gulp.task("normalizeJPGNames", normalizeJPGNames);
 gulp.task("normalizePNGNames", normalizePNGNames);
 gulp.task("cleanupGoodJPGs", () => cleanUpDir(dir_cuTempGoodJPGs));
+gulp.task("cleanupPNGs", () => cleanUpDir(dir_cuTempPNGs));
 
 gulp.task(
   "normalizeNames",
@@ -357,6 +358,7 @@ gulp.task(
     "normalizeJPGNames",
     "normalizePNGNames",
     "cleanupGoodJPGs",
+    "cleanupPNGs",
     "logDoneNormalizeNames"
   )
 );
