@@ -14,7 +14,7 @@ const deleteSrcFiles = require("./fns/delete-src-files");
 const logTask = require("./fns/log-task");
 const filterWrongFileNames = require("./fns/filter-wrong-filenames");
 const normalizePhotoNames = require("./fns/normalize-photo-names");
-const confirmTask = require("./fns/confirm-task");
+const { confirmTask } = require("./fns/confirm-task");
 const countFiles = require("./fns/count-files");
 const filterDirs = require("./fns/filter-dirs");
 
