@@ -101,7 +101,8 @@ gulp.task(
   "logAboutCuCopy",
   logTask("About to start: moving files to temporary dir (cuCopy/vids)...", {
     task: "start",
-    color: "blue"
+    color: "blue",
+    emptyLineAfter: false
   })
 );
 
@@ -133,7 +134,8 @@ gulp.task(
   "logAboutRenameExt",
   logTask("About to start: renaming extensions...", {
     task: "start",
-    color: "blue"
+    color: "blue",
+    emptyLineAfter: false
   })
 );
 
