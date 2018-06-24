@@ -64,7 +64,7 @@ const dir_cuTempCopyCu = paths.cuTemp + "cuCopy/";
 // const dir_cuTempJPGs = paths.cuTemp + "jpgs/";
 // const dir_cuTempJPEGs = paths.cuTemp + "jpegs/";
 // const dir_cuTempBigJPGs = paths.cuTemp + "bigJPGs/";
-const dir_cuTempMP4s = paths.cuTemp + "mp4s/";
+const dir_cuTempVids = paths.cuTemp + "vids/";
 // const dir_cuTempGIFs = paths.cuTemp + "gifs/";
 // const dir_cuTempPNGs = paths.cuTemp + "pngs/";
 
@@ -89,130 +89,88 @@ const dir_cuTemp = paths.cuTemp;
 const msg_countFiles = "        Total";
 const msg_forLogFile = "      - ";
 
-const makeCuCopy = () =>
+const makeCuCopyVids = () =>
   gulp
-    .src(dir_cu + "**/*")
+    .src([dir_cu + "**/*.mp4", dir_cu + "**/*.MP4"])
     .pipe(deleteSrcFiles())
     .pipe(logFile(msg_forLogFile))
     .pipe(countFiles(msg_countFiles, spawnTesterCb("cu")))
-    .pipe(gulp.dest(dir_cuTempCopyCu));
+    .pipe(gulp.dest(dir_cuTempVids));
+
+gulp.task(
+  "logAboutCuCopy",
+  logTask("About to start: moving files to temporary dir (cuCopy/vids)...", {
+    task: "start",
+    color: "blue"
+  })
+);
 
 gulp.task(
   "logDoneCuCopy",
-  logTask("Moved photos to cuCopy dir.", {
+  logTask("Moved photos to cuCopy/vids dir.", {
     task: "done",
     color: "green"
   })
 );
 
-gulp.task("makeCuCopy", makeCuCopy);
-gulp.task("cuCopy", gulp.series("makeCuCopy", "logDoneCuCopy"));
-
-/*************************************************************************
- *  TASK: firstSort
- *************************************************************************/
-// const msg_jpgs = "        Total jpgs";
-// const msg_jpegs = "        Total jpegs";
-// const msg_bigJPGs = "        Total JPGs";
-const msg_mp4s = "        Total mp4s";
-// const msg_gifs = "        Total gifs";
-// const msg_PNGs = "        Total PNGs";
-const msg_left = "        Total";
-
-// const copyJPGs = () => {
-//   return gulp
-//     .src(dir_cuTempCopyCu + "**/*")
-//     .pipe(filterByExt(".jpg"))
-//     .pipe(debug({ title: " - " }))
-//     .pipe(deleteSrcFiles())
-//     .pipe(countFiles(msg_jpgs))
-//     .pipe(gulp.dest(dir_cuTempJPGs));
-// };
-
-// const copyJEPGs = () =>
-//   gulp
-//     .src(dir_cuTempCopyCu + "**/*")
-//     .pipe(filterByExt(".jpeg"))
-//     .pipe(debug({ title: " - " }))
-//     .pipe(deleteSrcFiles())
-//     .pipe(countFiles(msg_jpegs))
-//     .pipe(gulp.dest(dir_cuTempJPEGs));
-
-// const copyBIGJPGs = () =>
-//   gulp
-//     .src(dir_cuTempCopyCu + "**/*")
-//     .pipe(filterByExt(".JPG"))
-//     .pipe(debug({ title: " - " }))
-//     .pipe(deleteSrcFiles())
-//     .pipe(countFiles(msg_bigJPGs))
-//     .pipe(gulp.dest(dir_cuTempBigJPGs));
-
-const copyMP4s = () =>
-  gulp
-    .src(dir_cuTempCopyCu + "**/*")
-    .pipe(filterByExt(".mp4"))
-    .pipe(debug({ title: " - " }))
-    .pipe(deleteSrcFiles())
-    .pipe(countFiles(msg_mp4s))
-    .pipe(gulp.dest(dir_cuTempMP4s));
-
-// const copyGIFs = () =>
-//   gulp
-//     .src(dir_cuTempCopyCu + "**/*")
-//     .pipe(filterByExt(".gif"))
-//     .pipe(debug({ title: " - " }))
-//     .pipe(deleteSrcFiles())
-//     .pipe(countFiles(msg_gifs))
-//     .pipe(gulp.dest(dir_cuTempGIFs));
-
-// const copyPNGs = () => {
-//   return gulp
-//     .src(dir_cuTempCopyCu + "**/*")
-//     .pipe(filterByExt(".png"))
-//     .pipe(debug({ title: " - " }))
-//     .pipe(deleteSrcFiles())
-//     .pipe(countFiles(msg_PNGs))
-//     .pipe(gulp.dest(dir_cuTempPNGs));
-// };
-
-const msg_leftInCu =
-  "Some files left in cuCopy dir (some edgecases is not supported!?)";
-
-const seeWhatLeft = () =>
-  gulp
-    .src(dir_cuTempCopyCu + "**/*")
-    .pipe(logMsg(msg_leftInCu, { task: "warn", color: "yellow" }))
-    .pipe(logFile(msg_forLogFile))
-    .pipe(countFiles(msg_left, spawnTesterCb("left")));
-
+gulp.task("makeCuCopyVids", makeCuCopyVids);
 gulp.task(
-  "logDoneFirstSort",
-  logTask("Sort photos by extensions.", {
-    task: "done",
-    color: "green"
-  })
+  "cuCopyVids",
+  gulp.series("logAboutCuCopy", "makeCuCopyVids", "logDoneCuCopy")
 );
 
-// gulp.task("copyPNGs", copyPNGs);
-// gulp.task("copyJPGs", copyJPGs);
-// gulp.task("copyJEPGs", copyJEPGs);
-// gulp.task("copyBIGJPGs", copyBIGJPGs);
-gulp.task("copyMP4s", copyMP4s);
-// gulp.task("copyGIFs", copyGIFs);
-gulp.task("seeWhatLeft", seeWhatLeft);
-gulp.task(
-  "firstSort",
-  gulp.series(
-    // "copyJPGs",
-    // "copyPNGs",
-    // "copyJEPGs",
-    // "copyBIGJPGs",
-    "copyMP4s",
-    // "copyGIFs",
-    "seeWhatLeft",
-    "logDoneFirstSort"
-  )
-);
+// /*************************************************************************
+//  *  TASK: firstSort
+//  *************************************************************************/
+// const msg_mp4s = "        Total mp4s";
+// const msg_left = "        Total";
+// const copyMP4s = () =>
+//   gulp
+//     .src(dir_cuTempCopyCu + "**/*")
+//     .pipe(filterByExt(".mp4"))
+//     .pipe(debug({ title: " - " }))
+//     .pipe(deleteSrcFiles())
+//     .pipe(countFiles(msg_mp4s))
+//     .pipe(gulp.dest(dir_cuTempMP4s));
+
+// const msg_leftInCu =
+//   "Some files left in cuCopy dir (some edgecases is not supported!?)";
+
+// const seeWhatLeft = () =>
+//   gulp
+//     .src(dir_cuTempCopyCu + "**/*")
+//     .pipe(logMsg(msg_leftInCu, { task: "warn", color: "yellow" }))
+//     .pipe(logFile(msg_forLogFile))
+//     .pipe(countFiles(msg_left, spawnTesterCb("left")));
+
+// gulp.task(
+//   "logDoneFirstSort",
+//   logTask("Sort photos by extensions.", {
+//     task: "done",
+//     color: "green"
+//   })
+// );
+
+// // gulp.task("copyPNGs", copyPNGs);
+// // gulp.task("copyJPGs", copyJPGs);
+// // gulp.task("copyJEPGs", copyJEPGs);
+// // gulp.task("copyBIGJPGs", copyBIGJPGs);
+// gulp.task("copyMP4s", copyMP4s);
+// // gulp.task("copyGIFs", copyGIFs);
+// gulp.task("seeWhatLeft", seeWhatLeft);
+// gulp.task(
+//   "firstSort",
+//   gulp.series(
+//     // "copyJPGs",
+//     // "copyPNGs",
+//     // "copyJEPGs",
+//     // "copyBIGJPGs",
+//     "copyMP4s",
+//     // "copyGIFs",
+//     "seeWhatLeft",
+//     "logDoneFirstSort"
+//   )
+// );
 
 // /*************************************************************************
 //  *  TASK: renameExtensions
@@ -423,30 +381,30 @@ gulp.task(
 /*************************************************************************
  *  DEFAULT
  *************************************************************************/
+// Default FNs
+gulp.task("displayBanner", () => banner("presort-vids", "ANSI Shadow"));
+gulp.task("confirmRun", confirmTask("Do you want to run this task?"));
+gulp.task("pressAnyToContinue", pressAny());
+gulp.task("confirmCleanUp", confirmTask("Do you want to clean up cuTemp dir?"));
+gulp.task("cleanup", () => cleanUpDir(dir_cuTemp));
 gulp.task(
   "logDoneCleanup",
-  logTask("Clean up cuTemp dir.", {
+  logTask("clean up cuTemp dir.", {
     task: "done",
     color: "green"
   })
 );
-
-gulp.task("pressAnyToContinue", pressAny());
-gulp.task("confirmRun", confirmTask("Do you want to run this task?"));
-gulp.task("confirmCleanUp", confirmTask("Do you want to clean up cuTemp dir?"));
-gulp.task("displayBanner", () => banner("cu-presort", "ANSI Shadow"));
-gulp.task("cleanup", () => cleanUpDir(dir_cuTemp));
 
 gulp.task(
   "default",
   gulp.series(
     "displayBanner",
     "confirmRun",
-    "cuCopy",
-    "pressAnyToContinue",
-    "firstSort",
-    "pressAnyToContinue",
-    // "renameExtensions",
+    "cuCopyVids"
+    // "pressAnyTocontinue",
+    // "firstsort",
+    // "pressanytocontinue",
+    // "renameextensions",
     // "pressAnyToContinue",
     // "renameWrongNames",
     // "pressAnyToContinue",
@@ -454,9 +412,9 @@ gulp.task(
     // "pressAnyToContinue",
     // "moveToCuSort",
     // "pressAnyToContinue",
-    "testIt",
-    "confirmCleanUp",
-    "cleanup",
-    "logDoneCleanup"
+    // "testIt",
+    // "confirmCleanUp",
+    // "cleanup",
+    // "logDoneCleanup"
   )
 );
