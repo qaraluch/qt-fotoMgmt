@@ -119,58 +119,37 @@ gulp.task(
   gulp.series("logAboutCuCopy", "makeCuCopyVids", "logDoneCuCopy")
 );
 
-// /*************************************************************************
-//  *  TASK: firstSort
-//  *************************************************************************/
-// const msg_mp4s = "        Total mp4s";
-// const msg_left = "        Total";
-// const copyMP4s = () =>
-//   gulp
-//     .src(dir_cuTempCopyCu + "**/*")
-//     .pipe(filterByExt(".mp4"))
-//     .pipe(debug({ title: " - " }))
-//     .pipe(deleteSrcFiles())
-//     .pipe(countFiles(msg_mp4s))
-//     .pipe(gulp.dest(dir_cuTempMP4s));
+/*************************************************************************
+ *  TASK: renameExtensions
+ *************************************************************************/
 
-// const msg_leftInCu =
-//   "Some files left in cuCopy dir (some edgecases is not supported!?)";
+const renameExtensions = () =>
+  gulp
+    .src(dir_cuTempVids + "**/*.MP4", { base: "./" })
+    .pipe(renameExt(".MP4", ".mp4"))
+    .pipe(gulp.dest("."));
 
-// const seeWhatLeft = () =>
-//   gulp
-//     .src(dir_cuTempCopyCu + "**/*")
-//     .pipe(logMsg(msg_leftInCu, { task: "warn", color: "yellow" }))
-//     .pipe(logFile(msg_forLogFile))
-//     .pipe(countFiles(msg_left, spawnTesterCb("left")));
+gulp.task(
+  "logAboutRenameExt",
+  logTask("About to start: renaming extensions...", {
+    task: "start",
+    color: "blue"
+  })
+);
 
-// gulp.task(
-//   "logDoneFirstSort",
-//   logTask("Sort photos by extensions.", {
-//     task: "done",
-//     color: "green"
-//   })
-// );
+gulp.task(
+  "logDoneRenameExt",
+  logTask("Renamed photos by their extensions.", {
+    task: "done",
+    color: "green"
+  })
+);
 
-// // gulp.task("copyPNGs", copyPNGs);
-// // gulp.task("copyJPGs", copyJPGs);
-// // gulp.task("copyJEPGs", copyJEPGs);
-// // gulp.task("copyBIGJPGs", copyBIGJPGs);
-// gulp.task("copyMP4s", copyMP4s);
-// // gulp.task("copyGIFs", copyGIFs);
-// gulp.task("seeWhatLeft", seeWhatLeft);
-// gulp.task(
-//   "firstSort",
-//   gulp.series(
-//     // "copyJPGs",
-//     // "copyPNGs",
-//     // "copyJEPGs",
-//     // "copyBIGJPGs",
-//     "copyMP4s",
-//     // "copyGIFs",
-//     "seeWhatLeft",
-//     "logDoneFirstSort"
-//   )
-// );
+gulp.task("runRenameExtensions", renameExtensions);
+gulp.task(
+  "renameExtensions",
+  gulp.series("logAboutRenameExt", "runRenameExtensions", "logDoneRenameExt")
+);
 
 // /*************************************************************************
 //  *  TASK: renameExtensions
@@ -400,11 +379,9 @@ gulp.task(
   gulp.series(
     "displayBanner",
     "confirmRun",
-    "cuCopyVids"
+    "cuCopyVids",
     // "pressAnyTocontinue",
-    // "firstsort",
-    // "pressanytocontinue",
-    // "renameextensions",
+    "renameExtensions"
     // "pressAnyToContinue",
     // "renameWrongNames",
     // "pressAnyToContinue",
