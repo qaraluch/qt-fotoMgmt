@@ -7,7 +7,8 @@ const chalk = require("chalk");
 const types = {
   done: `[ ${chalk.green("✔")} ] `,
   fail: `[ ${chalk.red("✖")} ] `,
-  warn: `[ ${chalk.yellow("!")} ] `
+  warn: `[ ${chalk.yellow("!")} ] `,
+  start: `[ ${chalk.blue("\u2022")} ] `
 };
 
 module.exports = function logTask(msg = "!msg not defined", options = {}) {
