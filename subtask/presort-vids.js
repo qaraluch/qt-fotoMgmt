@@ -68,9 +68,6 @@ const dir_cuTempVids = paths.cuTemp + "vids/";
 // const dir_cuTempGIFs = paths.cuTemp + "gifs/";
 // const dir_cuTempPNGs = paths.cuTemp + "pngs/";
 
-// TASK: renameExtensions
-// const dir_cuTempFlushJPGs = paths.cuTemp + "flushJPGs/";
-
 // TASK: renameWrongNames
 // const dir_cuTempGoodJPGs = paths.cuTemp + "goodJPGs/";
 // const dir_cuTempJPGRenamed = paths.cuTemp + "jpgRenamed/";
@@ -121,14 +118,24 @@ gulp.task(
 );
 
 /*************************************************************************
- *  TASK: renameExtensions
+ *  TASK: basicTransforms
  *************************************************************************/
 
-const renameExtensions = () =>
+const renameExtFn = () =>
   gulp
-    .src(dir_cuTempVids + "**/*.MP4", { base: "./" })
+    .src(dir_cuTempVids + "**/*.MP4")
     .pipe(renameExt(".MP4", ".mp4"))
-    .pipe(gulp.dest("."));
+    .pipe(gulp.dest(dir_cuTempVids));
+
+const msg_tryToRename = "Try to rena.......????";
+
+const renameAfterExifDateFn = () =>
+  gulp
+    .src(dir_cuTempVids + "**/*.mp4")
+    .pipe(logMsg(msg_tryToRename, { task: "warn" }))
+    .pipe(renameAfterExifDate())
+    // .pipe(logFile(msg_forLogFile))
+    .pipe(gulp.dest(dir_cuTempVids));
 
 gulp.task(
   "logAboutRenameExt",
@@ -147,70 +154,36 @@ gulp.task(
   })
 );
 
-gulp.task("runRenameExtensions", renameExtensions);
 gulp.task(
-  "renameExtensions",
-  gulp.series("logAboutRenameExt", "runRenameExtensions", "logDoneRenameExt")
+  "logAboutRenameNameAfterExifDate",
+  logTask("About to start: renaming name after exif date...", {
+    task: "start",
+    color: "blue",
+    emptyLineAfter: false
+  })
 );
 
-// /*************************************************************************
-//  *  TASK: renameExtensions
-//  *************************************************************************/
-// const renameBIGJPGs = () =>
-//   gulp
-//     .src(dir_cuTempBigJPGs + "**/*")
-//     .pipe(renameExt(".JPG", ".jpg"))
-//     .pipe(gulp.dest(dir_cuTempFlushJPGs));
+gulp.task(
+  "logDoneRenameNameAfterExifDate",
+  logTask("Renamed photos by their exif date.", {
+    task: "done",
+    color: "green"
+  })
+);
 
-// const renameJPEGs = () =>
-//   gulp
-//     .src(dir_cuTempJPEGs + "**/*")
-//     .pipe(renameExt(".jpeg", ".jpg"))
-//     .pipe(bumpFotoVersion(1))
-//     // bump ver to avoid overwriting modified fotos
-//     // 1 due to jpegs are modified ones so must have next version
-//     .pipe(gulp.dest(dir_cuTempFlushJPGs));
-
-// const moveJPGs = () =>
-//   gulp.src(dir_cuTempJPGs + "**/*").pipe(gulp.dest(dir_cuTempFlushJPGs));
-
-// gulp.task(
-//   "logDoneExtRename",
-//   logTask("Renamed photos by their extensions.", {
-//     task: "done",
-//     color: "green"
-//   })
-// );
-
-// gulp.task("renameBIGJPGs", renameBIGJPGs);
-// gulp.task("cleanupBIGJPGs", () => cleanUpDir(dir_cuTempBigJPGs));
-// gulp.task("renameJPEGs", renameJPEGs);
-// gulp.task("cleanupJPEGs", () => cleanUpDir(dir_cuTempJPEGs));
-// gulp.task("moveJPGs", moveJPGs);
-// gulp.task("cleanupJPGs", () => cleanUpDir(dir_cuTempJPGs));
-// gulp.task(
-//   "renameExtensions",
-//   gulp.series(
-//     gulp.parallel("renameBIGJPGs", "renameJPEGs", "moveJPGs"),
-//     gulp.parallel("cleanupBIGJPGs", "cleanupJPEGs", "cleanupJPGs"),
-//     "logDoneExtRename"
-//   )
-// );
-
-// /*************************************************************************
-//  *  TASK: renameWrongNames
-//  *************************************************************************/
-// // jpgFlush will remain due to some files may not be renamed
-// const regexForCheckNames = /\d{4}-\d{2}-\d{2}\s\d{2}\.\d{2}\.\d{2}(-\d)?(\s)?(-)?(\s)?(.+)?\.jpg/;
-
-// const checkNames = () =>
-//   gulp
-//     .src(dir_cuTempFlushJPGs + "**/*")
-//     .pipe(filterWrongFileNames(regexForCheckNames))
-//     .pipe(deleteSrcFiles())
-//     .pipe(debug({ title: " - " }))
-//     .pipe(gulp.dest(dir_cuTempGoodJPGs));
-
+gulp.task("runRenameAfterExifDate", renameAfterExifDateFn);
+gulp.task("runRenameExtFn", renameExtFn);
+gulp.task(
+  "basicTransforms",
+  gulp.series(
+    "logAboutRenameExt",
+    "runRenameExtFn",
+    "logDoneRenameExt",
+    "logAboutRenameNameAfterExifDate",
+    "runRenameAfterExifDate",
+    "logDoneRenameNameAfterExifDate"
+  )
+);
 // const msg_tryToRename = "Try to rename files in jpgFlush dir after exif date!";
 
 // const tryToRenameWrongAfterExifDate = () =>
@@ -383,7 +356,7 @@ gulp.task(
     "confirmRun",
     "cuCopyVids",
     // "pressAnyTocontinue",
-    "renameExtensions"
+    "basicTransforms"
     // "pressAnyToContinue",
     // "renameWrongNames",
     // "pressAnyToContinue",
