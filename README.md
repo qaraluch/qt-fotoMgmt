@@ -1,6 +1,6 @@
 ![logo-qm](./pic/git-logo-qt-gulp.jpg)
 
-# qt-fotoMgmt [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
+# qt-fotoMgmt (DEPRECATED) [![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 
 > Node.js script for automating and managing photos build on top of [gulpjs](https://github.com/gulpjs/gulp).
 
