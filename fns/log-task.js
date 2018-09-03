@@ -7,14 +7,20 @@ const chalk = require("chalk");
 const types = {
   done: `[ ${chalk.green("✔")} ] `,
   fail: `[ ${chalk.red("✖")} ] `,
-  warn: `[ ${chalk.yellow("!")} ] `
+  warn: `[ ${chalk.yellow("!")} ] `,
+  start: `[ ${chalk.blue("\u2022")} ] `
 };
 
 module.exports = function logTask(msg = "!msg not defined", options = {}) {
   return () => {
-    const { color = "yellow", task = "none" } = options;
+    const { color = "yellow", task = "none", emptyLineAfter = true } = options;
     const sign = types[task] || "";
-    log(`${sign}${chalk[color](msg)}\n`);
+    const msgLine = `${sign}${chalk[color](msg)}`;
+    if (emptyLineAfter) {
+      log(`${msgLine}\n`);
+    } else {
+      log(`${msgLine}`);
+    }
     return Promise.resolve();
   };
 };

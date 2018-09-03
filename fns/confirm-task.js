@@ -6,7 +6,7 @@ const prompt = require("gulp-prompt");
 
 function confirmTask(message = "some mgs?", defaultOpt = true) {
   return () =>
-    gulp.src("./package.json").pipe(
+    gulp.src("./foo.js", { allowEmpty: true }).pipe(
       prompt.confirm({
         message,
         default: defaultOpt
@@ -16,7 +16,7 @@ function confirmTask(message = "some mgs?", defaultOpt = true) {
 
 function pressAny(message = "Continue?") {
   return () =>
-    gulp.src("./package.json").pipe(
+    gulp.src("./foo.js", { allowEmpty: true }).pipe(
       prompt.prompt({
         type: "input",
         name: "pressAny",
